@@ -1,0 +1,64 @@
+## 1. Tenant Features
+
+* **Smart Onboarding & Verified Profile:** OTP-based login paired with a verified tenant profile detailing occupation, workplace, and family size to build instant credibility with landlords.
+* **Bachelor / Family / Sublet Dedicated Switch:** A one-tap toggle directly on the home screen to filter exclusively for bachelor, family, or sublet accommodations.
+* **Side-by-Side Property Comparison:** A comparison matrix allowing users to evaluate 2 to 3 shortlisted properties across rent, square footage, floor level, service charges, and commute distance.
+* **Visit Scheduler & Live Video Tour:** An integrated booking calendar to request either a live video walkthrough or an in-person viewing slot before visiting physically.
+* **Saved Search & Instant Alerts:** Custom location and budget alerts (e.g., *Uttara, under 15,000 BDT*) that trigger real-time push notifications the moment a matching property goes live.
+* **Move-in Cost Calculator:** An automated estimator that combines base rent, security deposit (advance), service charges, utility averages, and estimated moving costs to show the exact upfront cash required.
+
+---
+
+## 2. AI-Powered Differentiators
+
+* **Voice & Natural Language Search:** Multilingual search supporting English, Bangla, and Banglish via text or voice (e.g., *"Show me a 2-bedroom flat near Mirpur 10 Metro within 16,000 BDT with a balcony"*), bypassing manual filters entirely.
+* **AI Fair Rent Meter:** A dynamic pricing gauge that analyzes neighborhood averages, floor size, and amenities to label listings as **Fair Price**, **Great Deal**, or **Overpriced**.
+* **AI Photo Classifier & Quality Enhancer:** Computer vision that automatically categorizes uploaded images (Bedroom, Kitchen, Washroom, Balcony) and enhances lighting/clarity on dark photos.
+* **One-Click AI Listing Writer:** An automated copywriter that generates structured, appealing property descriptions after the landlord selects basic room counts and amenities.
+* **AI Rent Agreement Generator:** A legal assistant that populates landlord and tenant NID details plus agreed terms into a ready-to-print standard rental contract (PDF) in one click.
+
+---
+
+## 3. Google Maps & Location Intelligence
+
+* **Draw-on-Map Search (Freehand Selection):** Allows users to draw a custom circle or polygon on the map with their finger to isolate listings within specific streets or blocks.
+* **Office/University Commute Calculator:** Powered by the Google Distance Matrix API, this calculates peak-hour travel time and traffic delays from the property to the user's daily destination.
+* **Nearby Essentials Layer:** Interactive map pins highlighting essential amenities within a 500-meter radius, including Metro stations, bus stops, grocery markets, mosques, schools, hospitals, and ATMs.
+* **Street View & Alley Width Preview:** In-app Google Street View integration so tenants can inspect the building exterior and verify whether the access road is wide enough for cars or moving trucks.
+* **Crowdsourced Area Insights (Utility & Waterlogging):** Neighborhood ratings submitted by local residents covering monsoon waterlogging, gas pressure reliability, water supply, and nighttime street safety.
+
+---
+
+## 4. Landlord Features
+
+* **60-Second Quick Post:** A streamlined publishing flow where landlords drop a map pin, upload photos, enter the rent, and publish a listing in under a minute.
+* **1-Tap Re-Listing (Property Vault):** Allows landlords to mark a property as **Rented** instead of deleting it. When the flat becomes vacant a year later, they can re-publish the saved listing with a single tap.
+* **Tenant Screening Inbox:** A structured inquiry dashboard where landlords can review prospective tenants' verified profiles, occupations, and past rental ratings before accepting a chat or call.
+* **Digital Rent & Utility Ledger:** An in-app property management tool to track monthly rent, electricity, gas, and service charges, send automated payment reminders, and issue digital receipts.
+
+---
+
+## 5. Trust, Security & Communication
+
+* **In-App Masked Calling & Chat:** Encrypted in-app messaging and voice calling that hides both parties' actual phone numbers to prevent spam, harassment, and off-hours calls.
+* **Geo-Tagged Live Photo Badge:** Grants a **"Verified Real Photo"** badge to images captured directly through the in-app camera with active GPS verification, eliminating fake or recycled gallery photos.
+* **Anti-Broker & NID Verification:** Automated National ID (NID) and live selfie verification to confirm genuine property owners or authorized caretakers while blocking middlemen and brokers.
+* **Automated Listing Expiry & Availability Check:** Sends an automated prompt to the landlord every 15 days asking *"Is this property still available?"* and auto-hides unresponsive listings to keep the platform free of dead leads.
+
+---
+
+## 6. Admin & Monetization Features
+
+* **AI Spam & Duplicate Detector:** Flags duplicate property photos, suspiciously low-priced scam listings, and unauthorized broker activity automatically.
+* **Demand vs. Supply Heatmap:** A visual analytics dashboard showing high-search, low-inventory neighborhoods so the operations team knows exactly where to acquire new landlords.
+* **Monetization & Partner Manager:** Admin controls for managing boosted/featured listings, verification fees, and affiliate bookings for third-party services (packers & movers, cleaners, painters).
+
+---
+
+## 7. Feature Prioritization Matrix (Rollout Plan)
+
+| Phase | Core Focus | Included Features |
+| --- | --- | --- |
+| **MVP (Launch)** | Core Functionality & Verified Data | OTP Login, Map Pin Search, Family/Bachelor Switch, 1-Tap Re-Listing, In-App Chat & Masked Calling, Geo-Tagged Photo Upload, NID Verification. |
+| **Phase 2 (Growth)** | AI & Deep Map Integration | AI Natural Language/Voice Search, Draw-on-Map, Commute Time Calculator, AI Fair Rent Meter, AI Photo Classifier, Live Video Tour Scheduler. |
+| **Phase 3 (Ecosystem)** | Financial & Utility Tools | Digital Rent Ledger & Receipts, AI Rent Agreement Generator, Crowdsourced Area Insights (Waterlogging/Gas), Packers & Movers Integration. |

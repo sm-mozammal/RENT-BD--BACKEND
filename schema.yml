@@ -1,0 +1,4338 @@
+openapi: 3.0.3
+info:
+  title: RentBD Mobile API
+  version: 1.0.0
+  description: Next-Generation House Rental Platform Backend API for Bangladesh (DRF
+    + GeoDjango/PostGIS)
+paths:
+  /api/v1/admin/ai-spam-queue/:
+    get:
+      operationId: v1_admin_ai_spam_queue_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSpamReportList'
+          description: ''
+  /api/v1/admin/ai-spam-queue/{id}/resolve/:
+    post:
+      operationId: v1_admin_ai_spam_queue_resolve_create
+      summary: Resolve AI Spam Report
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpamReportResolve'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SpamReportResolve'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SpamReportResolve'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpamReport'
+          description: ''
+  /api/v1/admin/analytics/demand-supply-heatmap/:
+    get:
+      operationId: v1_admin_analytics_demand_supply_heatmap_retrieve
+      summary: Demand vs Supply Heatmap Telemetry
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Geospatial area metrics
+  /api/v1/admin/finance/ledger/:
+    get:
+      operationId: v1_admin_finance_ledger_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAdminLedgerList'
+          description: ''
+  /api/v1/admin/geo-photos/:
+    get:
+      operationId: v1_admin_geo_photos_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedGeoPhotoVerificationList'
+          description: ''
+  /api/v1/admin/geo-photos/{id}/verify/:
+    post:
+      operationId: v1_admin_geo_photos_verify_create
+      summary: Verify Geo-Photo Coordinates
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeoPhotoVerify'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GeoPhotoVerify'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GeoPhotoVerify'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeoPhotoVerification'
+          description: ''
+  /api/v1/admin/nid-verifications/:
+    get:
+      operationId: v1_admin_nid_verifications_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNIDVerificationRequestList'
+          description: ''
+  /api/v1/admin/nid-verifications/{id}/approve/:
+    post:
+      operationId: v1_admin_nid_verifications_approve_create
+      summary: Approve Landlord NID Verification
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NIDApprove'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NIDApprove'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NIDApprove'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NIDVerificationRequest'
+          description: ''
+  /api/v1/admin/nid-verifications/{id}/reject/:
+    post:
+      operationId: v1_admin_nid_verifications_reject_create
+      summary: Reject Landlord NID / Flag Broker
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NIDReject'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NIDReject'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NIDReject'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NIDVerificationRequest'
+          description: ''
+  /api/v1/admin/overview-stats/:
+    get:
+      operationId: v1_admin_overview_stats_retrieve
+      description: Fetches real-time platform KPIs, growth percentages, pending queues,
+        and fair-rent health distributions.
+      summary: Dashboard Overview & Analytics Aggregates
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminOverviewStats'
+          description: ''
+  /api/v1/admin/properties/:
+    get:
+      operationId: v1_admin_properties_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAdminPropertyList'
+          description: ''
+  /api/v1/admin/properties/{id}/status/:
+    patch:
+      operationId: v1_admin_properties_status_partial_update
+      summary: Update Property Moderation Status
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPropertyStatusUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPropertyStatusUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPropertyStatusUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminProperty'
+          description: ''
+  /api/v1/admin/users/:
+    get:
+      operationId: v1_admin_users_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAdminUserList'
+          description: ''
+  /api/v1/admin/users/{id}/ban/:
+    post:
+      operationId: v1_admin_users_ban_create
+      summary: Toggle Broker / Ban Status
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUser'
+          description: ''
+  /api/v1/auth/change-password/:
+    post:
+      operationId: v1_auth_change_password_create
+      description: Updates authenticated user's account password.
+      summary: Change Password
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Password changed successfully
+  /api/v1/auth/login/:
+    post:
+      operationId: v1_auth_login_create
+      description: Authenticates existing user using mobile number and password, with
+        optional active role selection.
+      summary: Login with Mobile Number and Password
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordLogin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordLogin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordLogin'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Logged in successfully with JWT and Profile
+  /api/v1/auth/logout/:
+    post:
+      operationId: v1_auth_logout_create
+      description: Logs out the user and invalidates the refresh token.
+      summary: User Logout
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Logged out successfully
+  /api/v1/auth/nid-verify/:
+    post:
+      operationId: v1_auth_nid_verify_create
+      description: Submits National ID images and optional live selfie to verify landlord
+        or tenant credentials.
+      summary: Upload NID & Live Selfie for Verification (Anti-broker)
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NIDVerify'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/NIDVerify'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/NIDVerify'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: NID documents received for verification
+  /api/v1/auth/otp/request/:
+    post:
+      operationId: v1_auth_otp_request_create
+      description: Generates and dispatches a 6-digit OTP to a Bangladeshi mobile
+        number (+8801...).
+      summary: Request OTP for Mobile Number (Bangladesh)
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OTPRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OTPRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OTPRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: OTP sent successfully
+  /api/v1/auth/otp/verify/:
+    post:
+      operationId: v1_auth_otp_verify_create
+      description: Verifies the 6-digit OTP, registers or logs in the user, and returns
+        JWT tokens + user profile.
+      summary: Verify OTP and Login / Register
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OTPVerify'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OTPVerify'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OTPVerify'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Login successful with JWT and User Profile
+  /api/v1/auth/profile/:
+    get:
+      operationId: v1_auth_profile_retrieve
+      description: Returns the verified profile and landlord/tenant status of the
+        currently authenticated user.
+      summary: Get Current User Profile
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+    patch:
+      operationId: v1_auth_profile_partial_update
+      description: Updates tenant/landlord profile details like occupation, workplace,
+        family size, etc.
+      summary: Update Current User Profile
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+  /api/v1/auth/register/:
+    post:
+      operationId: v1_auth_register_create
+      description: Creates a new account for a Tenant or Landlord with phone number,
+        password, and profile.
+      summary: Register New Account with Role (Tenant or Landlord)
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Register'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Register'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          description: User registered successfully with JWT and Profile
+  /api/v1/auth/role/switch/:
+    post:
+      operationId: v1_auth_role_switch_create
+      description: Switches the user's active role between Tenant, Landlord, or Dual.
+      summary: Switch Operational Role (Tenant <-> Landlord)
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoleSwitch'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RoleSwitch'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RoleSwitch'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+          description: ''
+  /api/v1/chat/calls/{id}/:
+    patch:
+      operationId: v1_chat_calls_partial_update
+      description: Updates status of VoIP call (CONNECTED, ENDED, MISSED) and records
+        duration in seconds.
+      summary: Update Masked Call Session Status
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMaskedCallSessionUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedMaskedCallSessionUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMaskedCallSessionUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Call session updated
+  /api/v1/chat/rooms/:
+    get:
+      operationId: v1_chat_rooms_list
+      description: Returns all active encrypted chat rooms for current tenant or landlord.
+      summary: List User Chat Rooms (In-App Messaging)
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatRoom'
+          description: ''
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatRoom'
+          description: ''
+    post:
+      operationId: v1_chat_rooms_create
+      summary: Start or Open Chat Room for Property
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRoomCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChatRoomCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChatRoomCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatRoom'
+          description: ''
+  /api/v1/chat/rooms/{id}/call-token/:
+    post:
+      operationId: v1_chat_rooms_call_token_create
+      description: Generates ephemeral Agora RTC audio calling token, masking both
+        parties' real phone numbers.
+      summary: In-App Masked Calling (VoIP Session Token)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Masked VoIP session token
+  /api/v1/chat/rooms/{id}/messages/:
+    get:
+      operationId: v1_chat_rooms_messages_list
+      summary: Get Chat Room Message History
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatMessage'
+          description: ''
+    post:
+      operationId: v1_chat_rooms_messages_create
+      summary: Send In-App Chat Message
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendMessage'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SendMessage'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SendMessage'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessage'
+          description: ''
+  /api/v1/inquiries/:
+    post:
+      operationId: v1_inquiries_create
+      description: Tenant submits an inquiry with automatic snapshot of their verified
+        profile credentials.
+      summary: Submit Tenant Inquiry for Property
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InquiryCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/InquiryCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InquiryCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Inquiry'
+          description: ''
+  /api/v1/inquiries/{id}/status/:
+    patch:
+      operationId: v1_inquiries_status_partial_update
+      description: Landlord accepts or declines tenant inquiry. Accepting unlocks
+        chat and masked calling.
+      summary: Accept or Decline Tenant Inquiry
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedInquiryStatusUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedInquiryStatusUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedInquiryStatusUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Inquiry'
+          description: ''
+  /api/v1/inquiries/landlord-inbox/:
+    get:
+      operationId: v1_inquiries_landlord_inbox_list
+      description: Returns all tenant inquiries submitted for properties owned by
+        the current landlord.
+      summary: Tenant Screening Inbox (Landlord)
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Inquiry'
+          description: ''
+  /api/v1/inquiries/visits/:
+    get:
+      operationId: v1_inquiries_visits_list
+      description: Returns scheduled visits for tenant or landlord.
+      summary: List Scheduled Visits (In-person & Video Tour)
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VisitBooking'
+          description: ''
+    post:
+      operationId: v1_inquiries_visits_create
+      summary: Schedule In-Person Visit or Live Video Tour
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VisitBookingCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VisitBookingCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VisitBookingCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisitBooking'
+          description: ''
+  /api/v1/inquiries/visits/{id}/status/:
+    patch:
+      operationId: v1_inquiries_visits_status_partial_update
+      summary: Update Visit Booking Status (Confirm / Cancel)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedVisitBookingStatusUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedVisitBookingStatusUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedVisitBookingStatusUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisitBooking'
+          description: ''
+  /api/v1/insights/area/:
+    get:
+      operationId: v1_insights_area_retrieve
+      description: Returns aggregated ratings and community reviews for a neighborhood.
+      summary: Crowdsourced Area Insights (Waterlogging, Gas Pressure, Safety)
+      parameters:
+      - in: query
+        name: area
+        schema:
+          type: string
+        description: Name of area (e.g. Mirpur 10, Uttara, Dhanmondi)
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Area aggregate report
+  /api/v1/insights/submit/:
+    post:
+      operationId: v1_insights_submit_create
+      summary: Submit Neighborhood Utility & Safety Feedback
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AreaInsightSubmit'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AreaInsightSubmit'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AreaInsightSubmit'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AreaInsight'
+          description: ''
+  /api/v1/ledger/bills/:
+    get:
+      operationId: v1_ledger_bills_list
+      summary: List Monthly Rent & Utility Bills
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RentBill'
+          description: ''
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RentBill'
+          description: ''
+    post:
+      operationId: v1_ledger_bills_create
+      summary: Issue Monthly Rent & Utility Bill
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RentBillCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RentBillCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RentBillCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RentBill'
+          description: ''
+  /api/v1/ledger/bills/{id}/mark-paid/:
+    post:
+      operationId: v1_ledger_bills_mark_paid_create
+      summary: Mark Bill Paid & Generate Digital Receipt
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MarkBillPaid'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MarkBillPaid'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MarkBillPaid'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Bill settled and digital receipt generated
+  /api/v1/ledger/bills/{id}/receipt/:
+    get:
+      operationId: v1_ledger_bills_receipt_retrieve
+      summary: View Digital Rent Receipt
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Printable digital receipt data
+  /api/v1/ledger/bills/{id}/send-reminder/:
+    post:
+      operationId: v1_ledger_bills_send_reminder_create
+      description: Landlord sends an automated push & SMS payment reminder for an
+        unpaid or overdue bill.
+      summary: Send Automated Rent Payment Reminder
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Payment reminder dispatched
+  /api/v1/ledger/tenancies/:
+    get:
+      operationId: v1_ledger_tenancies_list
+      description: Returns rental contracts where user is either landlord or tenant.
+      summary: List Active Tenancy Contracts
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TenancyContract'
+          description: ''
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenancyContract'
+          description: ''
+    post:
+      operationId: v1_ledger_tenancies_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenancyContract'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TenancyContract'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TenancyContract'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenancyContract'
+          description: ''
+  /api/v1/properties/:
+    get:
+      operationId: v1_properties_list
+      description: Fetch listings filtered by Bachelor/Family/Sublet switch, area,
+        price range, and bedrooms.
+      summary: List Properties with Dedicated Switches & Filters
+      parameters:
+      - in: query
+        name: area
+        schema:
+          type: string
+        description: Search area or neighborhood (e.g. Mirpur, Uttara)
+      - in: query
+        name: bedrooms
+        schema:
+          type: integer
+        description: Number of bedrooms
+      - in: query
+        name: max_rent
+        schema:
+          type: number
+          format: double
+        description: Maximum monthly rent in BDT
+      - in: query
+        name: min_rent
+        schema:
+          type: number
+          format: double
+        description: Minimum monthly rent in BDT
+      - in: query
+        name: property_type
+        schema:
+          type: string
+        description: 'Filter: APARTMENT, SUBLET, HOSTEL, DUPLEX'
+      - in: query
+        name: tenant_category
+        schema:
+          type: string
+        description: 'Filter: FAMILY, BACHELOR_MALE, BACHELOR_FEMALE, ANY'
+      - in: query
+        name: vault
+        schema:
+          type: boolean
+        description: If true, shows landlord's rented/vault listings
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Property'
+          description: ''
+    post:
+      operationId: v1_properties_create
+      description: Publish a new property listing in under 60 seconds with photos
+        and geo-coordinates.
+      summary: 60-Second Quick Post Listing
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuickPost'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/QuickPost'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/QuickPost'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+          description: ''
+  /api/v1/properties/{id}/:
+    get:
+      operationId: v1_properties_retrieve
+      description: Returns full property details, verified photo badges, and move-in
+        cost breakdown.
+      summary: Get Property Details
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+          description: ''
+    patch:
+      operationId: v1_properties_partial_update
+      summary: Update Property Listing
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProperty'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProperty'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProperty'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Property'
+          description: ''
+    delete:
+      operationId: v1_properties_destroy
+      summary: Delete Property Listing
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: Listing deleted
+  /api/v1/properties/{id}/boost/:
+    post:
+      operationId: v1_properties_boost_create
+      summary: Boost Property Listing (Featured Badge & Top Placement)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MonetizationBoost'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MonetizationBoost'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MonetizationBoost'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Boost activated with payment receipt
+  /api/v1/properties/{id}/confirm-availability/:
+    post:
+      operationId: v1_properties_confirm_availability_create
+      description: Landlord responds to prompt confirming the flat is still available,
+        resetting expiry timer.
+      summary: Automated 15-Day Availability Confirmation
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListingAvailabilityConfirm'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ListingAvailabilityConfirm'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ListingAvailabilityConfirm'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Availability updated
+  /api/v1/properties/{id}/fair-rent-meter/:
+    get:
+      operationId: v1_properties_fair_rent_meter_retrieve
+      description: Analyzes neighborhood rent averages and amenities to label listings
+        as Fair Price, Great Deal, or Overpriced.
+      summary: AI Fair Rent Meter
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Valuation analysis
+  /api/v1/properties/{id}/move-in-cost/:
+    post:
+      operationId: v1_properties_move_in_cost_create
+      description: Calculates exact upfront cash required including rent, advance
+        deposit, utilities, and moving truck.
+      summary: Move-in Cost Calculator
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveInCostCalculator'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MoveInCostCalculator'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MoveInCostCalculator'
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Upfront cash breakdown
+  /api/v1/properties/{id}/nearby-essentials/:
+    get:
+      operationId: v1_properties_nearby_essentials_retrieve
+      description: Returns essential amenities within walking distance (Metro, Bus
+        Stops, Mosques, Hospitals, Markets, ATMs).
+      summary: Nearby Essentials Layer (500m Radius)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: List of nearby points of interest
+  /api/v1/properties/{id}/photos/:
+    post:
+      operationId: v1_properties_photos_create
+      description: Extracts EXIF metadata to confirm the photo was taken at the actual
+        property location.
+      summary: Upload Geo-Tagged Photo with EXIF GPS Verification
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PropertyPhotoUpload'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PropertyPhotoUpload'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyImage'
+          description: ''
+  /api/v1/properties/{id}/save/:
+    post:
+      operationId: v1_properties_save_create
+      summary: Save or Unsave Property (Wishlist)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Toggled save state
+  /api/v1/properties/{id}/street-view/:
+    get:
+      operationId: v1_properties_street_view_retrieve
+      description: Returns Google Street View coordinates and road access width for
+        pickup vans and cars.
+      summary: Street View & Alley Width Preview
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Street view and road accessibility
+  /api/v1/properties/{id}/toggle-vault/:
+    post:
+      operationId: v1_properties_toggle_vault_create
+      description: Toggles the listing status between 'Available' and 'Rented/Vault'
+        with a single tap.
+      summary: 1-Tap Re-Listing / Mark Rented (Property Vault)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Status updated
+  /api/v1/properties/admin/detect-spam/:
+    post:
+      operationId: v1_properties_admin_detect_spam_create
+      description: Scans property for duplicate photos, scam prices (< ৳3500 for whole
+        flat), or unauthorized broker activity.
+      summary: AI Spam & Duplicate Listing Detector
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpamDetectorRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SpamDetectorRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SpamDetectorRequest'
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Spam and duplicate inspection report
+  /api/v1/properties/ai-generate-description/:
+    post:
+      operationId: v1_properties_ai_generate_description_create
+      description: Generates an engaging property title and structured description
+        based on room counts and amenities.
+      summary: One-Click AI Listing Writer
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIListingGenerateRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AIListingGenerateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AIListingGenerateRequest'
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Generated title and description
+  /api/v1/properties/ai/classify-photo/:
+    post:
+      operationId: v1_properties_ai_classify_photo_create
+      description: Categorizes uploaded photos into Bedroom, Kitchen, Living, Washroom,
+        Balcony, and assesses lighting clarity.
+      summary: AI Photo Classifier & Quality Enhancer
+      tags:
+      - v1
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AIPhotoClassifier'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AIPhotoClassifier'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIPhotoClassifier'
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Photo category and enhancement recommendations
+  /api/v1/properties/ai/generate-agreement/:
+    post:
+      operationId: v1_properties_ai_generate_agreement_create
+      description: Populates verified landlord and tenant NID details plus agreed
+        terms into a ready-to-print legal rental contract in Markdown and HTML.
+      summary: AI Rent Agreement Generator
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIRentAgreementRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AIRentAgreementRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AIRentAgreementRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Legal contract in markdown and formatted HTML/text
+  /api/v1/properties/ai_search/:
+    get:
+      operationId: v1_properties_ai_search_list
+      description: Search properties using English, Bangla, and Banglish natural language
+        or voice queries.
+      summary: AI Multilingual Natural Language & Voice Search
+      parameters:
+      - in: query
+        name: q
+        schema:
+          type: string
+        description: Natural language prompt (e.g. 2-bed flat near Mirpur 10 Metro
+          within 16000 with balcony)
+      - in: query
+        name: verbose
+        schema:
+          type: boolean
+        description: If true, returns parsed criteria alongside properties
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Property'
+          description: ''
+    post:
+      operationId: v1_properties_ai_search_create
+      description: Search properties via JSON voice-to-text transcript or natural
+        language payload.
+      summary: AI Voice/Natural Language Search (POST)
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AISearchRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AISearchRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AISearchRequest'
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Property'
+          description: ''
+  /api/v1/properties/analytics/demand-supply-heatmap/:
+    get:
+      operationId: v1_properties_analytics_demand_supply_heatmap_retrieve
+      description: Returns live neighborhood analytics of tenant search volume vs
+        active listing inventory.
+      summary: Demand vs Supply Heatmap Analytics
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Heatmap data by neighborhood
+  /api/v1/properties/calculate-move-in/:
+    post:
+      operationId: v1_properties_calculate_move_in_create
+      description: Calculates exact upfront cash required including rent, advance
+        deposit, utilities, and moving truck.
+      summary: Move-in Cost Calculator
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveInCostCalculator'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/MoveInCostCalculator'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MoveInCostCalculator'
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Upfront cash breakdown
+  /api/v1/properties/commute-calculator/:
+    post:
+      operationId: v1_properties_commute_calculator_create
+      description: Calculates peak-hour travel times, traffic delays, and Dhaka Metro
+        transit times from property.
+      summary: Office / University Commute Calculator
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommuteCalculatorRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CommuteCalculatorRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CommuteCalculatorRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Commute times breakdown
+  /api/v1/properties/compare/:
+    post:
+      operationId: v1_properties_compare_create
+      description: Evaluate 2 to 3 properties across rent, sqft, floor level, service
+        charges, advance, utilities, and commute distance.
+      summary: Side-by-Side Property Comparison Matrix
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PropertyCompareRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PropertyCompareRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PropertyCompareRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Comparative evaluation matrix
+  /api/v1/properties/draw-search/:
+    post:
+      operationId: v1_properties_draw_search_create
+      description: Filter listings situated within an arbitrary custom polygon drawn
+        on the map by the user.
+      summary: Draw-on-Map Search (Freehand Polygon)
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DrawSearch'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DrawSearch'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DrawSearch'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Property'
+          description: ''
+  /api/v1/properties/saved/:
+    get:
+      operationId: v1_properties_saved_list
+      summary: Get Saved Properties for Current User
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Property'
+          description: ''
+  /api/v1/properties/saved-searches/:
+    get:
+      operationId: v1_properties_saved_searches_list
+      description: List and create location and budget alerts that trigger push notifications.
+      summary: Saved Searches & Instant Alerts
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SavedSearch'
+          description: ''
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedSearch'
+          description: ''
+    post:
+      operationId: v1_properties_saved_searches_create
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SavedSearch'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SavedSearch'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SavedSearch'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedSearch'
+          description: ''
+  /api/v1/properties/saved-searches/alerts/:
+    get:
+      operationId: v1_properties_saved_searches_alerts_list
+      description: Returns real-time notifications for newly listed properties matching
+        saved searches.
+      summary: Instant Alerts for Saved Searches
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SavedSearchAlert'
+          description: ''
+  /api/v1/properties/saved-searches/alerts/{id}/read/:
+    patch:
+      operationId: v1_properties_saved_searches_alerts_read_partial_update
+      summary: Mark Alert as Read
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: Alert marked as read
+  /api/v1/properties/services/book/:
+    post:
+      operationId: v1_properties_services_book_create
+      summary: Book Affiliate Moving or Cleaning Service
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartnerServiceBooking'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PartnerServiceBooking'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PartnerServiceBooking'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          description: Service booking confirmation
+  /api/v1/properties/services/partners/:
+    get:
+      operationId: v1_properties_services_partners_retrieve
+      description: 'Returns list of verified partner services: Packers & Movers, Cleaners,
+        Painters.'
+      summary: Affiliate Services & Movers Partners
+      tags:
+      - v1
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: Partner services catalog
+components:
+  schemas:
+    AIListingGenerateRequest:
+      type: object
+      properties:
+        bedrooms:
+          type: integer
+          default: 2
+        bathrooms:
+          type: integer
+          default: 2
+        area:
+          type: string
+          default: Mirpur 10
+        tenant_category:
+          allOf:
+          - $ref: '#/components/schemas/TenantCategoryEnum'
+          default: FAMILY
+        amenities:
+          type: array
+          items:
+            type: string
+    AIPhotoClassifier:
+      type: object
+      properties:
+        image:
+          type: string
+          format: uri
+          nullable: true
+        image_url:
+          type: string
+          format: uri
+    AIRentAgreementRequest:
+      type: object
+      properties:
+        property_id:
+          type: string
+          format: uuid
+        tenant_name:
+          type: string
+          maxLength: 120
+        tenant_phone:
+          type: string
+          maxLength: 20
+        tenant_nid:
+          type: string
+          maxLength: 50
+        agreed_rent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        security_deposit:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        start_date:
+          type: string
+          format: date
+        duration_months:
+          type: integer
+          default: 12
+        special_conditions:
+          type: string
+          default: ''
+      required:
+      - agreed_rent
+      - property_id
+      - security_deposit
+      - start_date
+      - tenant_name
+      - tenant_nid
+      - tenant_phone
+    AISearchRequest:
+      type: object
+      properties:
+        q:
+          type: string
+          default: ''
+          description: Natural language or voice search query
+        query:
+          type: string
+          default: ''
+          description: Alternative query field
+    ActionEnum:
+      enum:
+      - listing_banned
+      - landlord_blocked
+      - false_positive
+      type: string
+      description: |-
+        * `listing_banned` - listing_banned
+        * `landlord_blocked` - landlord_blocked
+        * `false_positive` - false_positive
+    AdminLedger:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        property_id:
+          type: string
+          readOnly: true
+        property_title:
+          type: string
+          readOnly: true
+        landlord_name:
+          type: string
+          readOnly: true
+        tenant_name:
+          type: string
+          readOnly: true
+        month:
+          type: string
+          readOnly: true
+        base_rent_bdt:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+        service_charge_bdt:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+        total_paid_bdt:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+        payment_method:
+          type: string
+          maxLength: 50
+        platform_fee_collected:
+          type: number
+          format: double
+          readOnly: true
+        transaction_date:
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status194Enum'
+      required:
+      - base_rent_bdt
+      - id
+      - landlord_name
+      - month
+      - platform_fee_collected
+      - property_id
+      - property_title
+      - service_charge_bdt
+      - tenant_name
+      - total_paid_bdt
+      - transaction_date
+    AdminOverviewStats:
+      type: object
+      properties:
+        total_users:
+          type: integer
+        users_growth_pct:
+          type: number
+          format: double
+        active_listings:
+          type: integer
+        listings_growth_pct:
+          type: number
+          format: double
+        pending_nid_count:
+          type: integer
+        pending_spam_count:
+          type: integer
+        total_revenue_bdt:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        revenue_growth_pct:
+          type: number
+          format: double
+        rent_agreements_generated:
+          type: integer
+        fair_rent_breakdown:
+          type: object
+          additionalProperties: {}
+        category_breakdown:
+          type: object
+          additionalProperties: {}
+        monthly_revenue_history:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+      required:
+      - active_listings
+      - category_breakdown
+      - fair_rent_breakdown
+      - listings_growth_pct
+      - monthly_revenue_history
+      - pending_nid_count
+      - pending_spam_count
+      - rent_agreements_generated
+      - revenue_growth_pct
+      - total_revenue_bdt
+      - total_users
+      - users_growth_pct
+    AdminProperty:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        property_type:
+          $ref: '#/components/schemas/PropertyTypeEnum'
+        tenant_category:
+          $ref: '#/components/schemas/TenantCategoryEnum'
+        rent_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        security_deposit:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        service_charge:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        area_neighborhood:
+          type: string
+          maxLength: 120
+        full_address:
+          type: string
+          maxLength: 255
+        bedrooms:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        bathrooms:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        balconies:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        square_feet:
+          type: integer
+          maximum: 4294967295
+          minimum: 0
+          format: int64
+        floor_level:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        total_floors:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        status:
+          $ref: '#/components/schemas/StatusBe6Enum'
+        fair_price_status:
+          $ref: '#/components/schemas/FairPriceStatusEnum'
+        fair_price_percent_diff:
+          type: number
+          format: double
+        has_geo_tagged_photos:
+          type: boolean
+        is_available:
+          type: boolean
+        is_featured:
+          type: boolean
+        landlord_name:
+          type: string
+          readOnly: true
+        landlord_phone:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - full_address
+      - id
+      - landlord_name
+      - landlord_phone
+      - rent_amount
+      - security_deposit
+      - title
+    AdminUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        phone_number:
+          type: string
+          maxLength: 20
+        full_name:
+          type: string
+          maxLength: 120
+        email:
+          nullable: true
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        is_phone_verified:
+          type: boolean
+        is_staff:
+          type: boolean
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        is_flagged_broker:
+          type: boolean
+        date_joined:
+          type: string
+          format: date-time
+        listings_count:
+          type: integer
+          readOnly: true
+        nid_status:
+          type: string
+          readOnly: true
+      required:
+      - full_name
+      - id
+      - listings_count
+      - nid_status
+      - phone_number
+    AreaInsight:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        area_name:
+          type: string
+          maxLength: 120
+        user_name:
+          type: string
+          readOnly: true
+        waterlogging_risk:
+          $ref: '#/components/schemas/WaterloggingRiskC3eEnum'
+        gas_supply_reliability:
+          $ref: '#/components/schemas/GasSupplyReliabilityEnum'
+        water_quality:
+          $ref: '#/components/schemas/WaterQuality736Enum'
+        night_safety_rating:
+          type: number
+          format: double
+        resident_review:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - area_name
+      - created_at
+      - id
+      - user_name
+    AreaInsightSubmit:
+      type: object
+      properties:
+        area_name:
+          type: string
+          maxLength: 120
+        waterlogging_risk:
+          $ref: '#/components/schemas/WaterloggingRiskC3eEnum'
+        gas_supply_reliability:
+          $ref: '#/components/schemas/GasSupplyReliabilityEnum'
+        water_quality:
+          $ref: '#/components/schemas/WaterQuality736Enum'
+        night_safety_rating:
+          type: number
+          format: double
+        resident_review:
+          type: string
+      required:
+      - area_name
+    BookingTypeEnum:
+      enum:
+      - IN_PERSON
+      - VIDEO_TOUR
+      type: string
+      description: |-
+        * `IN_PERSON` - In-Person Visit
+        * `VIDEO_TOUR` - Live Video Tour
+    ChangePassword:
+      type: object
+      properties:
+        current_password:
+          type: string
+          writeOnly: true
+        new_password:
+          type: string
+          writeOnly: true
+          minLength: 6
+      required:
+      - current_password
+      - new_password
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        room:
+          type: string
+          format: uuid
+        sender:
+          type: string
+          format: uuid
+          readOnly: true
+        sender_name:
+          type: string
+          readOnly: true
+        message_text:
+          type: string
+        is_read:
+          type: boolean
+        is_me:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - is_me
+      - message_text
+      - room
+      - sender
+      - sender_name
+    ChatRoom:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        property:
+          type: string
+          format: uuid
+          readOnly: true
+        property_title:
+          type: string
+          readOnly: true
+        property_rent:
+          type: number
+          format: double
+          readOnly: true
+        landlord:
+          type: string
+          format: uuid
+          readOnly: true
+        tenant:
+          type: string
+          format: uuid
+          readOnly: true
+        other_party_name:
+          type: string
+          readOnly: true
+        other_party_phone_masked:
+          type: string
+          readOnly: true
+        last_message:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        is_active:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - is_active
+      - landlord
+      - last_message
+      - other_party_name
+      - other_party_phone_masked
+      - property
+      - property_rent
+      - property_title
+      - tenant
+      - updated_at
+    ChatRoomCreate:
+      type: object
+      properties:
+        property_id:
+          type: string
+          format: uuid
+      required:
+      - property_id
+    CommuteCalculatorRequest:
+      type: object
+      properties:
+        property_id:
+          type: string
+          format: uuid
+        destination_lat:
+          type: number
+          format: double
+        destination_lng:
+          type: number
+          format: double
+        destination_name:
+          type: string
+          default: Office / Campus
+        travel_mode:
+          allOf:
+          - $ref: '#/components/schemas/TravelModeEnum'
+          default: METRO_TRANSIT
+      required:
+      - destination_lat
+      - destination_lng
+      - property_id
+    DrawSearch:
+      type: object
+      properties:
+        polygon:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+              format: double
+            maxItems: 2
+            minItems: 2
+          description: List of [latitude, longitude] pairs representing the freehand
+            polygon
+          minItems: 3
+      required:
+      - polygon
+    FairPriceStatusEnum:
+      enum:
+      - GREAT_DEAL
+      - FAIR_PRICE
+      - OVERPRICED
+      type: string
+      description: |-
+        * `GREAT_DEAL` - Great Deal
+        * `FAIR_PRICE` - Fair Price
+        * `OVERPRICED` - Overpriced
+    GasSupplyEnum:
+      enum:
+      - LINE_GAS
+      - CYLINDER
+      - NONE
+      type: string
+      description: |-
+        * `LINE_GAS` - Line Gas
+        * `CYLINDER` - Cylinder
+        * `NONE` - None
+    GasSupplyReliabilityEnum:
+      enum:
+      - EXCELLENT
+      - ADEQUATE
+      - POOR
+      - NONE
+      type: string
+      description: |-
+        * `EXCELLENT` - Continuous 24/7 Full Pressure
+        * `ADEQUATE` - Low Pressure during Morning Cooking Hours
+        * `POOR` - Severe Gas Shortage (Requires Cylinder)
+        * `NONE` - No Line Gas
+    GeoPhotoVerification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        property_id:
+          type: string
+          readOnly: true
+        property_title:
+          type: string
+          readOnly: true
+        landlord_name:
+          type: string
+          maxLength: 120
+        landlord_phone:
+          type: string
+          maxLength: 30
+        photo_url:
+          type: string
+          format: uri
+          maxLength: 500
+        property_coordinates:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        exif_coordinates:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        distance_difference_meters:
+          type: number
+          format: double
+        accuracy_meters:
+          type: number
+          format: double
+        is_camera_live:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/GeoPhotoVerificationStatusEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - exif_coordinates
+      - id
+      - photo_url
+      - property_coordinates
+      - property_id
+      - property_title
+    GeoPhotoVerificationStatusEnum:
+      enum:
+      - pending
+      - approved
+      - rejected
+      type: string
+      description: |-
+        * `pending` - Pending Verification
+        * `approved` - Approved
+        * `rejected` - Rejected
+    GeoPhotoVerify:
+      type: object
+      properties:
+        approved:
+          type: boolean
+      required:
+      - approved
+    Inquiry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        property_id:
+          type: string
+          readOnly: true
+        property_title:
+          type: string
+          readOnly: true
+        tenant_id:
+          type: string
+          readOnly: true
+        tenant_name:
+          type: string
+          readOnly: true
+        tenant_phone_masked:
+          type: string
+          readOnly: true
+        tenant_occupation:
+          type: string
+          readOnly: true
+        tenant_workplace:
+          type: string
+          readOnly: true
+        tenant_family_size:
+          type: integer
+          readOnly: true
+        tenant_is_nid_verified:
+          type: boolean
+          readOnly: true
+        tenant_rental_rating:
+          type: number
+          format: double
+          readOnly: true
+        message:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/InquiryStatusEnum'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - message
+      - property_id
+      - property_title
+      - status
+      - tenant_family_size
+      - tenant_id
+      - tenant_is_nid_verified
+      - tenant_name
+      - tenant_occupation
+      - tenant_phone_masked
+      - tenant_rental_rating
+      - tenant_workplace
+    InquiryCreate:
+      type: object
+      properties:
+        property_id:
+          type: string
+          format: uuid
+        message:
+          type: string
+          default: ''
+      required:
+      - property_id
+    InquiryStatusEnum:
+      enum:
+      - PENDING
+      - ACCEPTED
+      - DECLINED
+      type: string
+      description: |-
+        * `PENDING` - Pending Review
+        * `ACCEPTED` - Accepted
+        * `DECLINED` - Declined
+    InquiryStatusUpdateStatusEnum:
+      enum:
+      - ACCEPTED
+      - DECLINED
+      type: string
+      description: |-
+        * `ACCEPTED` - ACCEPTED
+        * `DECLINED` - DECLINED
+    ListingAvailabilityConfirm:
+      type: object
+      properties:
+        is_available:
+          type: boolean
+          default: true
+    MarkBillPaid:
+      type: object
+      properties:
+        payment_method:
+          allOf:
+          - $ref: '#/components/schemas/MarkBillPaidPaymentMethodEnum'
+          default: BKASH
+    MarkBillPaidPaymentMethodEnum:
+      enum:
+      - BKASH
+      - NAGAD
+      - BANK_TRANSFER
+      - CASH
+      type: string
+      description: |-
+        * `BKASH` - BKASH
+        * `NAGAD` - NAGAD
+        * `BANK_TRANSFER` - BANK_TRANSFER
+        * `CASH` - CASH
+    MaskedCallSessionUpdateStatusEnum:
+      enum:
+      - INITIATED
+      - CONNECTED
+      - ENDED
+      - MISSED
+      type: string
+      description: |-
+        * `INITIATED` - Initiated
+        * `CONNECTED` - Connected
+        * `ENDED` - Ended
+        * `MISSED` - Missed
+    MonetizationBoost:
+      type: object
+      properties:
+        property_id:
+          type: string
+          format: uuid
+        duration_days:
+          type: integer
+          default: 7
+        payment_method:
+          allOf:
+          - $ref: '#/components/schemas/MonetizationBoostPaymentMethodEnum'
+          default: BKASH
+      required:
+      - property_id
+    MonetizationBoostPaymentMethodEnum:
+      enum:
+      - BKASH
+      - NAGAD
+      - UPAY
+      - CARD
+      type: string
+      description: |-
+        * `BKASH` - BKASH
+        * `NAGAD` - NAGAD
+        * `UPAY` - UPAY
+        * `CARD` - CARD
+    MoveInCostCalculator:
+      type: object
+      properties:
+        property_id:
+          type: string
+          format: uuid
+        rent_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        security_deposit:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        service_charge:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          default: '3000.00'
+        estimated_utilities:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          default: '2000.00'
+        moving_distance_km:
+          type: number
+          format: double
+          default: 8.0
+        truck_type:
+          allOf:
+          - $ref: '#/components/schemas/TruckTypeEnum'
+          default: PICKUP_SMALL
+        needs_labour:
+          type: boolean
+          default: true
+    NIDApprove:
+      type: object
+      properties:
+        notes:
+          type: string
+          default: ''
+    NIDReject:
+      type: object
+      properties:
+        reason:
+          type: string
+      required:
+      - reason
+    NIDVerificationRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        landlord_id:
+          type: string
+          readOnly: true
+        landlord_name:
+          type: string
+          readOnly: true
+        landlord_phone:
+          type: string
+          readOnly: true
+        landlord_email:
+          type: string
+          readOnly: true
+        nid_number:
+          type: string
+          maxLength: 50
+        nid_type:
+          $ref: '#/components/schemas/NidTypeEnum'
+        nid_front_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 500
+          - type: string
+            maxLength: 0
+        nid_back_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 500
+          - type: string
+            maxLength: 0
+        live_selfie_url:
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 500
+          - type: string
+            maxLength: 0
+        ai_face_match_confidence:
+          type: number
+          format: double
+        extracted_data: {}
+        status:
+          $ref: '#/components/schemas/NIDVerificationRequestStatusEnum'
+        submitted_at:
+          type: string
+          format: date-time
+          readOnly: true
+        reviewer_notes:
+          type: string
+        rejection_reason:
+          type: string
+        reviewed_by:
+          type: string
+          maxLength: 120
+        reviewed_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - id
+      - landlord_email
+      - landlord_id
+      - landlord_name
+      - landlord_phone
+      - nid_number
+      - submitted_at
+    NIDVerificationRequestStatusEnum:
+      enum:
+      - pending
+      - approved
+      - rejected
+      type: string
+      description: |-
+        * `pending` - Pending Review
+        * `approved` - Approved
+        * `rejected` - Rejected
+    NIDVerify:
+      type: object
+      properties:
+        nid_number:
+          type: string
+          maxLength: 50
+        nid_front:
+          type: string
+          format: uri
+        nid_back:
+          type: string
+          format: uri
+        selfie:
+          type: string
+          format: uri
+          nullable: true
+      required:
+      - nid_back
+      - nid_front
+      - nid_number
+    NidTypeEnum:
+      enum:
+      - smart_card
+      - old_nid
+      - birth_cert
+      type: string
+      description: |-
+        * `smart_card` - Smart NID Card
+        * `old_nid` - Old Paper/Laminated NID
+        * `birth_cert` - Birth Certificate
+    OTPRequest:
+      type: object
+      properties:
+        phone_number:
+          type: string
+          maxLength: 20
+      required:
+      - phone_number
+    OTPVerify:
+      type: object
+      properties:
+        phone_number:
+          type: string
+          maxLength: 20
+        otp_code:
+          type: string
+          maxLength: 6
+          minLength: 4
+        full_name:
+          type: string
+          maxLength: 120
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          default: tenant
+      required:
+      - otp_code
+      - phone_number
+    PaginatedAdminLedgerList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminLedger'
+    PaginatedAdminPropertyList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminProperty'
+    PaginatedAdminUserList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminUser'
+    PaginatedGeoPhotoVerificationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/GeoPhotoVerification'
+    PaginatedNIDVerificationRequestList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/NIDVerificationRequest'
+    PaginatedSpamReportList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpamReport'
+    PartnerServiceBooking:
+      type: object
+      properties:
+        service_type:
+          allOf:
+          - $ref: '#/components/schemas/ServiceTypeEnum'
+          default: PACKERS_MOVERS
+        property_address:
+          type: string
+          maxLength: 255
+        scheduled_date:
+          type: string
+          format: date
+        contact_phone:
+          type: string
+          maxLength: 20
+        notes:
+          type: string
+          default: ''
+      required:
+      - contact_phone
+      - property_address
+      - scheduled_date
+    PasswordLogin:
+      type: object
+      properties:
+        phone_number:
+          type: string
+          maxLength: 20
+        password:
+          type: string
+          writeOnly: true
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+      required:
+      - password
+      - phone_number
+    PatchedInquiryStatusUpdate:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/InquiryStatusUpdateStatusEnum'
+    PatchedMaskedCallSessionUpdate:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/MaskedCallSessionUpdateStatusEnum'
+        duration_seconds:
+          type: integer
+          default: 0
+    PatchedProfileUpdate:
+      type: object
+      properties:
+        full_name:
+          type: string
+          maxLength: 120
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        occupation:
+          type: string
+          maxLength: 120
+        workplace:
+          type: string
+          maxLength: 150
+        family_size:
+          type: integer
+          minimum: 1
+        emergency_contact:
+          type: string
+          maxLength: 20
+    PatchedProperty:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        landlord_id:
+          type: string
+          readOnly: true
+        landlord_name:
+          type: string
+          readOnly: true
+        landlord_phone_masked:
+          type: string
+          readOnly: true
+        landlord_is_nid_verified:
+          type: boolean
+          readOnly: true
+        landlord_rating:
+          type: number
+          format: double
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        property_type:
+          $ref: '#/components/schemas/PropertyTypeEnum'
+        tenant_category:
+          $ref: '#/components/schemas/TenantCategoryEnum'
+        rent_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        security_deposit:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        service_charge:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        estimated_utilities:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        bedrooms:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        bathrooms:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        balconies:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        square_feet:
+          type: integer
+          maximum: 4294967295
+          minimum: 0
+          format: int64
+        floor_level:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        total_floors:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        area_neighborhood:
+          type: string
+          maxLength: 120
+        full_address:
+          type: string
+          maxLength: 255
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertyImage'
+          readOnly: true
+        has_geo_tagged_photos:
+          type: boolean
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/StatusBe6Enum'
+        is_available:
+          type: boolean
+        is_owner_verified:
+          type: boolean
+          readOnly: true
+        fair_price_status:
+          allOf:
+          - $ref: '#/components/schemas/FairPriceStatusEnum'
+          readOnly: true
+        fair_price_percent_diff:
+          type: number
+          format: double
+          readOnly: true
+        area_average_rent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+        alley_width_feet:
+          type: number
+          format: double
+        gas_supply:
+          $ref: '#/components/schemas/GasSupplyEnum'
+        waterlogging_risk:
+          $ref: '#/components/schemas/PropertyWaterloggingRiskEnum'
+        water_quality:
+          $ref: '#/components/schemas/PropertyWaterQualityEnum'
+        night_safety_rating:
+          type: number
+          format: double
+          readOnly: true
+        is_saved:
+          type: boolean
+          readOnly: true
+        total_move_in_cost:
+          type: number
+          format: double
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedPropertyStatusUpdate:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/PropertyStatusUpdateStatusEnum'
+    PatchedVisitBookingStatusUpdate:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status498Enum'
+        video_call_link:
+          oneOf:
+          - type: string
+            format: uri
+          - type: string
+            maxLength: 0
+    Property:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        landlord_id:
+          type: string
+          readOnly: true
+        landlord_name:
+          type: string
+          readOnly: true
+        landlord_phone_masked:
+          type: string
+          readOnly: true
+        landlord_is_nid_verified:
+          type: boolean
+          readOnly: true
+        landlord_rating:
+          type: number
+          format: double
+          readOnly: true
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        property_type:
+          $ref: '#/components/schemas/PropertyTypeEnum'
+        tenant_category:
+          $ref: '#/components/schemas/TenantCategoryEnum'
+        rent_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        security_deposit:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        service_charge:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        estimated_utilities:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        bedrooms:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        bathrooms:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        balconies:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        square_feet:
+          type: integer
+          maximum: 4294967295
+          minimum: 0
+          format: int64
+        floor_level:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        total_floors:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        area_neighborhood:
+          type: string
+          maxLength: 120
+        full_address:
+          type: string
+          maxLength: 255
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertyImage'
+          readOnly: true
+        has_geo_tagged_photos:
+          type: boolean
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/StatusBe6Enum'
+        is_available:
+          type: boolean
+        is_owner_verified:
+          type: boolean
+          readOnly: true
+        fair_price_status:
+          allOf:
+          - $ref: '#/components/schemas/FairPriceStatusEnum'
+          readOnly: true
+        fair_price_percent_diff:
+          type: number
+          format: double
+          readOnly: true
+        area_average_rent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+        alley_width_feet:
+          type: number
+          format: double
+        gas_supply:
+          $ref: '#/components/schemas/GasSupplyEnum'
+        waterlogging_risk:
+          $ref: '#/components/schemas/PropertyWaterloggingRiskEnum'
+        water_quality:
+          $ref: '#/components/schemas/PropertyWaterQualityEnum'
+        night_safety_rating:
+          type: number
+          format: double
+          readOnly: true
+        is_saved:
+          type: boolean
+          readOnly: true
+        total_move_in_cost:
+          type: number
+          format: double
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - area_average_rent
+      - created_at
+      - fair_price_percent_diff
+      - fair_price_status
+      - full_address
+      - has_geo_tagged_photos
+      - id
+      - images
+      - is_owner_verified
+      - is_saved
+      - landlord_id
+      - landlord_is_nid_verified
+      - landlord_name
+      - landlord_phone_masked
+      - landlord_rating
+      - night_safety_rating
+      - rent_amount
+      - security_deposit
+      - title
+      - total_move_in_cost
+    PropertyCompareRequest:
+      type: object
+      properties:
+        property_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: List of 2 to 3 property UUIDs to compare side-by-side
+          maxItems: 3
+          minItems: 2
+        destination_lat:
+          type: number
+          format: double
+          nullable: true
+        destination_lng:
+          type: number
+          format: double
+          nullable: true
+        destination_name:
+          type: string
+          default: Daily Destination
+      required:
+      - property_ids
+    PropertyImage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        image_url:
+          type: string
+          readOnly: true
+        room_type:
+          $ref: '#/components/schemas/RoomTypeEnum'
+        is_geo_tagged:
+          type: boolean
+        captured_at:
+          type: string
+          format: date-time
+      required:
+      - id
+      - image_url
+    PropertyPhotoUpload:
+      type: object
+      properties:
+        image:
+          type: string
+          format: uri
+        room_type:
+          allOf:
+          - $ref: '#/components/schemas/RoomTypeEnum'
+          default: LIVING_ROOM
+      required:
+      - image
+    PropertyStatusUpdateStatusEnum:
+      enum:
+      - active
+      - pending_approval
+      - flagged_spam
+      - rented
+      - rejected
+      type: string
+      description: |-
+        * `active` - active
+        * `pending_approval` - pending_approval
+        * `flagged_spam` - flagged_spam
+        * `rented` - rented
+        * `rejected` - rejected
+    PropertyTypeEnum:
+      enum:
+      - APARTMENT
+      - SUBLET
+      - HOSTEL
+      - DUPLEX
+      type: string
+      description: |-
+        * `APARTMENT` - Apartment
+        * `SUBLET` - Sublet
+        * `HOSTEL` - Hostel
+        * `DUPLEX` - Duplex
+    PropertyWaterQualityEnum:
+      enum:
+      - EXCELLENT
+      - ADEQUATE
+      - IRREGULAR
+      type: string
+      description: |-
+        * `EXCELLENT` - Excellent
+        * `ADEQUATE` - Adequate
+        * `IRREGULAR` - Irregular
+    PropertyWaterloggingRiskEnum:
+      enum:
+      - NONE
+      - MILD
+      - HIGH
+      type: string
+      description: |-
+        * `NONE` - None
+        * `MILD` - Mild
+        * `HIGH` - High
+    QuickPost:
+      type: object
+      description: Serializer for the 60-second landlord quick post flow.
+      properties:
+        title:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        property_type:
+          $ref: '#/components/schemas/PropertyTypeEnum'
+        tenant_category:
+          $ref: '#/components/schemas/TenantCategoryEnum'
+        rent_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        security_deposit:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        service_charge:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        estimated_utilities:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        bedrooms:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        bathrooms:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        balconies:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        square_feet:
+          type: integer
+          maximum: 4294967295
+          minimum: 0
+          format: int64
+        floor_level:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        total_floors:
+          type: integer
+          maximum: 65535
+          minimum: 0
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        area_neighborhood:
+          type: string
+          maxLength: 120
+        full_address:
+          type: string
+          maxLength: 255
+        photo_urls:
+          type: array
+          items:
+            type: string
+            format: uri
+      required:
+      - full_address
+      - rent_amount
+      - security_deposit
+      - title
+    Register:
+      type: object
+      properties:
+        full_name:
+          type: string
+          maxLength: 120
+        phone_number:
+          type: string
+          maxLength: 20
+        email:
+          oneOf:
+          - type: string
+            format: email
+          - type: string
+            maxLength: 0
+        password:
+          type: string
+          writeOnly: true
+          minLength: 6
+        role:
+          allOf:
+          - $ref: '#/components/schemas/RoleEnum'
+          default: tenant
+      required:
+      - full_name
+      - password
+      - phone_number
+    RentBill:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        contract:
+          type: string
+          format: uuid
+        property_title:
+          type: string
+          readOnly: true
+        tenant_name:
+          type: string
+          readOnly: true
+        billing_month:
+          type: string
+          maxLength: 50
+        base_rent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        electricity_bill:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        gas_bill:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        water_bill:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        service_charge:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        total_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/Status194Enum'
+        due_date:
+          type: string
+          format: date
+        paid_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        payment_method:
+          type: string
+          maxLength: 50
+        receipt_no:
+          type: string
+          readOnly: true
+          default: ''
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - base_rent
+      - billing_month
+      - contract
+      - created_at
+      - due_date
+      - id
+      - paid_at
+      - property_title
+      - receipt_no
+      - tenant_name
+      - total_amount
+    RentBillCreate:
+      type: object
+      properties:
+        contract:
+          type: string
+          format: uuid
+        billing_month:
+          type: string
+          maxLength: 50
+        base_rent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        electricity_bill:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        gas_bill:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        water_bill:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        service_charge:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        due_date:
+          type: string
+          format: date
+      required:
+      - base_rent
+      - billing_month
+      - contract
+      - due_date
+    RoleEnum:
+      enum:
+      - tenant
+      - landlord
+      - dual
+      - admin
+      type: string
+      description: |-
+        * `tenant` - Tenant
+        * `landlord` - Landlord
+        * `dual` - Dual (Tenant & Landlord)
+        * `admin` - Administrator
+    RoleSwitch:
+      type: object
+      properties:
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+      required:
+      - role
+    RoomTypeEnum:
+      enum:
+      - BEDROOM
+      - LIVING_ROOM
+      - KITCHEN
+      - WASHROOM
+      - BALCONY
+      - EXTERIOR
+      type: string
+      description: |-
+        * `BEDROOM` - Bedroom
+        * `LIVING_ROOM` - Living Room
+        * `KITCHEN` - Kitchen
+        * `WASHROOM` - Washroom
+        * `BALCONY` - Balcony
+        * `EXTERIOR` - Exterior
+    SavedSearch:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 120
+        area:
+          type: string
+          maxLength: 120
+        tenant_category:
+          type: string
+          maxLength: 20
+        min_rent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+        max_rent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+        bedrooms:
+          type: integer
+          maximum: 65535
+          minimum: 0
+          nullable: true
+        push_alerts_enabled:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+    SavedSearchAlert:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        saved_search:
+          type: string
+          format: uuid
+        property_id:
+          type: string
+          format: uuid
+          readOnly: true
+        property_title:
+          type: string
+          readOnly: true
+        property_rent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+        property_area:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        message:
+          type: string
+          readOnly: true
+        is_read:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - message
+      - property_area
+      - property_id
+      - property_rent
+      - property_title
+      - saved_search
+      - title
+    SendMessage:
+      type: object
+      properties:
+        message_text:
+          type: string
+          minLength: 1
+      required:
+      - message_text
+    ServiceTypeEnum:
+      enum:
+      - PACKERS_MOVERS
+      - HOME_CLEANING
+      - DEEP_PAINTING
+      - ELECTRICIAN_PLUMBER
+      type: string
+      description: |-
+        * `PACKERS_MOVERS` - PACKERS_MOVERS
+        * `HOME_CLEANING` - HOME_CLEANING
+        * `DEEP_PAINTING` - DEEP_PAINTING
+        * `ELECTRICIAN_PLUMBER` - ELECTRICIAN_PLUMBER
+    SpamDetectorRequest:
+      type: object
+      properties:
+        property_id:
+          type: string
+          format: uuid
+        rent_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          default: '20000.00'
+        title:
+          type: string
+          default: ''
+        description:
+          type: string
+          default: ''
+    SpamReport:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        property_id:
+          type: string
+          readOnly: true
+        property_title:
+          type: string
+          readOnly: true
+        landlord_name:
+          type: string
+          maxLength: 120
+        landlord_phone:
+          type: string
+          maxLength: 30
+        rent_bdt:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        average_area_rent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        flags: {}
+        ai_confidence_score:
+          type: number
+          format: double
+        duplicate_match:
+          nullable: true
+        status:
+          $ref: '#/components/schemas/SpamReportStatusEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - property_id
+      - property_title
+    SpamReportResolve:
+      type: object
+      properties:
+        action:
+          $ref: '#/components/schemas/ActionEnum'
+      required:
+      - action
+    SpamReportStatusEnum:
+      enum:
+      - pending_review
+      - listing_banned
+      - landlord_blocked
+      - false_positive
+      type: string
+      description: |-
+        * `pending_review` - Pending Review
+        * `listing_banned` - Listing Banned
+        * `landlord_blocked` - Landlord Blocked
+        * `false_positive` - False Positive
+    Status194Enum:
+      enum:
+      - DUE
+      - PAID
+      - OVERDUE
+      type: string
+      description: |-
+        * `DUE` - Payment Due
+        * `PAID` - Settled & Paid
+        * `OVERDUE` - Overdue
+    Status498Enum:
+      enum:
+      - PENDING
+      - CONFIRMED
+      - COMPLETED
+      - CANCELLED
+      type: string
+      description: |-
+        * `PENDING` - Pending
+        * `CONFIRMED` - Confirmed
+        * `COMPLETED` - Completed
+        * `CANCELLED` - Cancelled
+    StatusBe6Enum:
+      enum:
+      - active
+      - pending_approval
+      - flagged_spam
+      - rented
+      - rejected
+      type: string
+      description: |-
+        * `active` - Active
+        * `pending_approval` - Pending Approval
+        * `flagged_spam` - Flagged Spam
+        * `rented` - Rented
+        * `rejected` - Rejected
+    TenancyContract:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        property:
+          type: string
+          format: uuid
+        property_title:
+          type: string
+          readOnly: true
+        landlord_name:
+          type: string
+          readOnly: true
+        tenant_name:
+          type: string
+          readOnly: true
+        agreed_rent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        service_charge:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+          nullable: true
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - agreed_rent
+      - created_at
+      - id
+      - landlord_name
+      - property
+      - property_title
+      - tenant_name
+    TenantCategoryEnum:
+      enum:
+      - FAMILY
+      - BACHELOR_MALE
+      - BACHELOR_FEMALE
+      - ANY
+      type: string
+      description: |-
+        * `FAMILY` - Family
+        * `BACHELOR_MALE` - Bachelor Male
+        * `BACHELOR_FEMALE` - Bachelor Female
+        * `ANY` - Any
+    TravelModeEnum:
+      enum:
+      - METRO_TRANSIT
+      - DRIVING
+      - WALKING
+      - RICKSHAW_CNG
+      type: string
+      description: |-
+        * `METRO_TRANSIT` - METRO_TRANSIT
+        * `DRIVING` - DRIVING
+        * `WALKING` - WALKING
+        * `RICKSHAW_CNG` - RICKSHAW_CNG
+    TruckTypeEnum:
+      enum:
+      - PICKUP_SMALL
+      - MEDIUM_TRUCK
+      - COVERED_VAN
+      type: string
+      description: |-
+        * `PICKUP_SMALL` - PICKUP_SMALL
+        * `MEDIUM_TRUCK` - MEDIUM_TRUCK
+        * `COVERED_VAN` - COVERED_VAN
+    UserProfile:
+      type: object
+      description: |-
+        Unified User Profile Serializer matching the Flutter UserProfile domain entity.
+        Provides both camelCase and snake_case compatibility.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        phoneNumber:
+          type: string
+          readOnly: true
+        fullName:
+          type: string
+        email:
+          nullable: true
+          oneOf:
+          - type: string
+            format: email
+            maxLength: 254
+          - type: string
+            maxLength: 0
+        role:
+          $ref: '#/components/schemas/RoleEnum'
+        avatarUrl:
+          type: string
+          readOnly: true
+        occupation:
+          type: string
+          readOnly: true
+        workplace:
+          type: string
+          readOnly: true
+        familySize:
+          type: integer
+          readOnly: true
+        nidNumber:
+          type: string
+          readOnly: true
+        isNidVerified:
+          type: boolean
+          readOnly: true
+        rentalRating:
+          type: number
+          format: double
+          readOnly: true
+        completedRentals:
+          type: integer
+          readOnly: true
+        isLandlord:
+          type: boolean
+          readOnly: true
+        isTenant:
+          type: boolean
+          readOnly: true
+        phone_number:
+          type: string
+          readOnly: true
+        full_name:
+          type: string
+          maxLength: 120
+        is_phone_verified:
+          type: boolean
+          readOnly: true
+        is_staff:
+          type: boolean
+        is_superuser:
+          type: boolean
+          title: Superuser status
+          description: Designates that this user has all permissions without explicitly
+            assigning them.
+        is_flagged_broker:
+          type: boolean
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - avatarUrl
+      - completedRentals
+      - date_joined
+      - familySize
+      - fullName
+      - full_name
+      - id
+      - isLandlord
+      - isNidVerified
+      - isTenant
+      - is_phone_verified
+      - nidNumber
+      - occupation
+      - phoneNumber
+      - phone_number
+      - rentalRating
+      - workplace
+    VisitBooking:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        property_id:
+          type: string
+          readOnly: true
+        property_title:
+          type: string
+          readOnly: true
+        tenant_name:
+          type: string
+          readOnly: true
+        booking_type:
+          $ref: '#/components/schemas/BookingTypeEnum'
+        scheduled_date:
+          type: string
+          format: date
+        time_slot:
+          type: string
+          maxLength: 50
+        status:
+          $ref: '#/components/schemas/Status498Enum'
+        video_call_link:
+          nullable: true
+          oneOf:
+          - type: string
+            format: uri
+            maxLength: 200
+          - type: string
+            maxLength: 0
+        notes:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - property_id
+      - property_title
+      - scheduled_date
+      - tenant_name
+      - time_slot
+    VisitBookingCreate:
+      type: object
+      properties:
+        property_id:
+          type: string
+          format: uuid
+        booking_type:
+          $ref: '#/components/schemas/BookingTypeEnum'
+        scheduled_date:
+          type: string
+          format: date
+        time_slot:
+          type: string
+          maxLength: 50
+        notes:
+          type: string
+      required:
+      - property_id
+      - scheduled_date
+      - time_slot
+    WaterQuality736Enum:
+      enum:
+      - EXCELLENT
+      - ADEQUATE
+      - IRREGULAR
+      type: string
+      description: |-
+        * `EXCELLENT` - Clean WASA Supply
+        * `ADEQUATE` - Adequate (Filter Recommended)
+        * `IRREGULAR` - Irregular / Smelly Water
+    WaterloggingRiskC3eEnum:
+      enum:
+      - NONE
+      - MILD
+      - HIGH
+      type: string
+      description: |-
+        * `NONE` - No Waterlogging
+        * `MILD` - Mild (Drains within 1-2 hours)
+        * `HIGH` - Severe Monsoon Waterlogging
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

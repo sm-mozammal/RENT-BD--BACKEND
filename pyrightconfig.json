@@ -1,0 +1,17 @@
+{
+  "include": [
+    "."
+  ],
+  "exclude": [
+    "**/node_modules",
+    "**/__pycache__"
+  ],
+  "extraPaths": [
+    ".",
+    "apps",
+    "venv/lib/python3.15/site-packages"
+  ],
+  "pythonPath": "venv/bin/python",
+  "venvPath": ".",
+  "venv": "venv"
+}

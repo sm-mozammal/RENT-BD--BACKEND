@@ -1,16 +1,45 @@
 from decimal import Decimal
+from typing import Any
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient as _DRFAPIClient
 try:
     from apps.accounts.models import User
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     from ..accounts.models import User
 from .models import Property
 
 
+class APIClient:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self._client = _DRFAPIClient(*args, **kwargs)
+
+    def force_authenticate(self, *args: Any, **kwargs: Any) -> Any:
+        return self._client.force_authenticate(*args, **kwargs)
+
+    def get(self, *args: Any, **kwargs: Any) -> Any:
+        return self._client.get(*args, **kwargs)
+
+    def post(self, *args: Any, **kwargs: Any) -> Any:
+        return self._client.post(*args, **kwargs)
+
+    def put(self, *args: Any, **kwargs: Any) -> Any:
+        return self._client.put(*args, **kwargs)
+
+    def patch(self, *args: Any, **kwargs: Any) -> Any:
+        return self._client.patch(*args, **kwargs)
+
+    def delete(self, *args: Any, **kwargs: Any) -> Any:
+        return self._client.delete(*args, **kwargs)
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._client, name)
+
+
 class PropertyApiTests(TestCase):
+    client: Any
+
     def setUp(self):
         self.client = APIClient()
         self.landlord = User.objects.create_user(
@@ -18,6 +47,8 @@ class PropertyApiTests(TestCase):
             full_name='Landlord Kabir',
             role=User.Role.LANDLORD,
         )
+        self.landlord.landlord_profile.is_nid_verified = True
+        self.landlord.landlord_profile.save(update_fields=['is_nid_verified'])
         self.tenant = User.objects.create_user(
             phone_number='+8801800000002',
             full_name='Tenant Rahim',
@@ -99,6 +130,29 @@ class PropertyApiTests(TestCase):
         self.assertEqual(res.data['title'], 'New 2-Bed Flat')
         self.assertEqual(len(res.data['images']), 2)
 
+    def test_quick_post_unverified_landlord_rejected(self):
+        unverified_landlord = User.objects.create_user(
+            phone_number='+8801700000099',
+            full_name='Unverified Landlord',
+            role=User.Role.LANDLORD,
+        )
+        unverified_landlord.landlord_profile.is_nid_verified = False
+        unverified_landlord.landlord_profile.save(update_fields=['is_nid_verified'])
+
+        self.client.force_authenticate(user=unverified_landlord)
+        url = reverse('property-list-create')
+        payload = {
+            'title': 'Unverified Listing',
+            'tenant_category': 'FAMILY',
+            'rent_amount': 25000.0,
+            'area_neighborhood': 'Dhanmondi',
+            'full_address': 'Road 27, Dhanmondi, Dhaka',
+        }
+        res = self.client.post(url, payload, format='json')
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(res.data.get('kyc_required'))
+        self.assertIn('NID verification (KYC) is required', res.data.get('detail', ''))
+
     def test_property_vault_toggle(self):
         self.client.force_authenticate(user=self.landlord)
         url = reverse('property-toggle-vault', kwargs={'pk': self.prop1.id})
@@ -112,6 +166,32 @@ class PropertyApiTests(TestCase):
         res2 = self.client.post(url, format='json')
         self.assertEqual(res2.status_code, status.HTTP_200_OK)
         self.assertTrue(res2.data['is_available'])
+
+    def test_property_vault_toggle_unverified_landlord_rejected(self):
+        unverified_landlord = User.objects.create_user(
+            phone_number='+8801700000088',
+            full_name='Unverified Landlord 2',
+            role=User.Role.LANDLORD,
+        )
+        unverified_landlord.landlord_profile.is_nid_verified = False
+        unverified_landlord.landlord_profile.save(update_fields=['is_nid_verified'])
+
+        prop = Property.objects.create(
+            landlord=unverified_landlord,
+            title='Vaulted Flat',
+            tenant_category=Property.TenantCategory.FAMILY,
+            rent_amount=Decimal('20000.00'),
+            security_deposit=Decimal('40000.00'),
+            area_neighborhood='Dhanmondi',
+            full_address='Road 27, Dhanmondi, Dhaka',
+            is_available=False,
+        )
+
+        self.client.force_authenticate(user=unverified_landlord)
+        url = reverse('property-toggle-vault', kwargs={'pk': prop.id})
+        res = self.client.post(url, format='json')
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(res.data.get('kyc_required'))
 
     def test_move_in_cost_calculation(self):
         url = reverse('property-detail', kwargs={'pk': self.prop1.id})

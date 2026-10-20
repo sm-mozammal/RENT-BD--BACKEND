@@ -134,6 +134,19 @@ class SuperAdminAPITests(APITestCase):
             payment_method='bKash',
         )
 
+    def test_8_1_login_with_email_password_and_role(self):
+        url = reverse('password-login')
+        payload = {
+            'email': 'admin@rentbd.com',
+            'password': 'Admin@RentBD2026',
+            'role': 'admin',
+        }
+        res = self.client.post(url, payload, format='json')
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertTrue(res.data['success'])
+        self.assertEqual(res.data['user']['email'], 'admin@rentbd.com')
+        self.assertEqual(res.data['user']['role'], 'admin')
+
     def test_8_1_super_admin_login(self):
         url = reverse('password-login')
         payload = {

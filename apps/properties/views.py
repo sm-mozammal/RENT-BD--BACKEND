@@ -124,6 +124,21 @@ class PropertyListCreateView(APIView):
         responses={201: PropertySerializer},
     )
     def post(self, request):
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Authentication required.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Landlords can register and login without KYC, but must complete NID KYC before creating/publishing a property listing
+        is_nid_verified = getattr(request.user, 'is_nid_verified', False)
+        if hasattr(request.user, 'landlord_profile'):
+            is_nid_verified = is_nid_verified or getattr(request.user.landlord_profile, 'is_nid_verified', False)
+
+        if not is_nid_verified and not (getattr(request.user, 'is_staff', False) or getattr(request.user, 'is_superuser', False)):
+            return Response({
+                'detail': 'NID verification (KYC) is required to create or publish rental property listings.',
+                'message': 'প্রোপার্টি লিস্টিং তৈরি করতে আপনার জাতীয় পরিচয়পত্র (NID) ভেরিফিকেশন (KYC) সম্পন্ন করা আবশ্যক।',
+                'kyc_required': True,
+            }, status=status.HTTP_403_FORBIDDEN)
+
         serializer = QuickPostSerializer(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         property_obj = serializer.save()
@@ -191,6 +206,20 @@ class PropertyVaultToggleView(APIView):
     )
     def post(self, request, pk):
         property_obj = get_object_or_404(Property, pk=pk, landlord=request.user)
+
+        # Landlords can register and login without KYC, but must complete NID KYC before publishing or re-listing
+        if not property_obj.is_available:
+            is_nid_verified = getattr(request.user, 'is_nid_verified', False)
+            if hasattr(request.user, 'landlord_profile'):
+                is_nid_verified = is_nid_verified or getattr(request.user.landlord_profile, 'is_nid_verified', False)
+
+            if not is_nid_verified and not (getattr(request.user, 'is_staff', False) or getattr(request.user, 'is_superuser', False)):
+                return Response({
+                    'detail': 'NID verification (KYC) is required to publish or re-list property listings.',
+                    'message': 'প্রোপার্টি পুনরায় লিস্টিং করতে আপনার জাতীয় পরিচয়পত্র (NID) ভেরিফিকেশন (KYC) সম্পন্ন করা আবশ্যক।',
+                    'kyc_required': True,
+                }, status=status.HTTP_403_FORBIDDEN)
+
         property_obj.is_available = not property_obj.is_available
         if property_obj.is_available:
             property_obj.last_confirmed_available_at = timezone.now()

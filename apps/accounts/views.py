@@ -178,10 +178,12 @@ class NIDVerifyView(APIView):
         serializer = NIDVerifySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        nid_number = serializer.validated_data['nid_number']
-        nid_front = serializer.validated_data['nid_front']
-        nid_back = serializer.validated_data['nid_back']
-        selfie = serializer.validated_data.get('selfie')
+        nid_number = serializer.validated_data.get('nid_number', '')
+        nid_front = serializer.validated_data.get('nid_front') or serializer.validated_data.get('nid_front_url')
+        nid_back = serializer.validated_data.get('nid_back') or serializer.validated_data.get('nid_back_url')
+        selfie = serializer.validated_data.get('selfie') or serializer.validated_data.get('selfie_url')
+        present_address = serializer.validated_data.get('present_address')
+        emergency_contact = serializer.validated_data.get('emergency_contact')
 
         user = request.user
 

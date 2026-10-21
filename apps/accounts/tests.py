@@ -1,11 +1,13 @@
-from django.test import TestCase
+from typing import Any
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APIClient
+from rest_framework.test import APITestCase, APIClient
 from apps.accounts.models import User, OTPVerification
 
 
-class AccountsAuthTests(TestCase):
+class AccountsAuthTests(APITestCase):
+    client: Any
+
     def setUp(self):
         self.client = APIClient()
         self.valid_phone = '01712345678'
@@ -131,4 +133,31 @@ class AccountsAuthTests(TestCase):
         self.assertEqual(switch_res.status_code, status.HTTP_200_OK)
         self.assertEqual(switch_res.data['role'], 'landlord')
         self.assertTrue(switch_res.data['isLandlord'])
+
+    def test_token_refresh(self):
+        user = User.objects.create_user(
+            phone_number='+8801777888111',
+            full_name='Token User',
+            password='Password123!',
+            role=User.Role.TENANT,
+        )
+        login_res = self.client.post(
+            reverse('password-login'),
+            {
+                'phone_number': '01777888111',
+                'password': 'Password123!',
+            },
+            format='json',
+        )
+        self.assertEqual(login_res.status_code, status.HTTP_200_OK)
+        refresh_token = login_res.data['tokens']['refresh']
+
+        refresh_res = self.client.post(
+            reverse('token-refresh'),
+            {'refresh': refresh_token},
+            format='json',
+        )
+        self.assertEqual(refresh_res.status_code, status.HTTP_200_OK)
+        self.assertIn('access', refresh_res.data)
+
 

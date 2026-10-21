@@ -205,6 +205,11 @@ class RoleSwitchSerializer(serializers.Serializer):
 
 class NIDVerifySerializer(serializers.Serializer):
     nid_number = serializers.CharField(max_length=50)
-    nid_front = serializers.ImageField(required=True)
-    nid_back = serializers.ImageField(required=True)
-    selfie = serializers.ImageField(required=False)
+    nid_front = serializers.FileField(required=False, allow_null=True)
+    nid_back = serializers.FileField(required=False, allow_null=True)
+    selfie = serializers.FileField(required=False, allow_null=True)
+    nid_front_url = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    nid_back_url = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    selfie_url = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    present_address = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    emergency_contact = serializers.CharField(required=False, allow_null=True, allow_blank=True)

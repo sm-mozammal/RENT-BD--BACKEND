@@ -1,6 +1,8 @@
 # RentBD Complete REST API Documentation
 
-Comprehensive API Reference for RentBD backend (Django REST Framework + MySQL/MariaDB + PostGIS). Covers all 52 endpoints implemented across all 6 applications for Android, iOS (Flutter), and Web.
+Comprehensive API Reference for RentBD backend (Django REST Framework + MySQL/MariaDB + PostGIS). Covers all **67 endpoints** implemented across all 7 applications for Android, iOS (Flutter), and Web.
+
+> 📖 **Full Endpoint Reference Manual:** See [API_DOCUMENTATION.md](API_DOCUMENTATION.md) for detailed JSON payloads, parameters, and sample responses for all endpoints.
 
 ---
 
@@ -17,7 +19,8 @@ Comprehensive API Reference for RentBD backend (Django REST Framework + MySQL/Ma
 10. [Module 6: Crowdsourced Area Insights (`/api/v1/insights/`)](#6-crowdsourced-area-insights)
 11. [Module 7: Digital Rent & Utility Ledger (`/api/v1/ledger/`)](#7-digital-rent--utility-ledger)
 12. [Module 8: In-App Chat & Masked Calling (`/api/v1/chat/`)](#8-in-app-chat--masked-calling)
-13. [Complete 52-Endpoint Audit Matrix](#-complete-52-endpoint-audit-matrix)
+13. [Module 9: Super Admin & Operations Management (`/api/v1/admin/`)](#9-super-admin--operations-management)
+14. [Complete 67-Endpoint Master Audit Matrix](#-complete-67-endpoint-master-audit-matrix)
 
 ---
 
@@ -177,7 +180,28 @@ Returns JWT tokens and user profile object.
 
 ---
 
-### 1.5 Switch Role (Tenant / Landlord / Dual)
+### 1.5 Refresh JWT Session Token
+- **Method:** `POST`
+- **Endpoint:** `/api/v1/auth/token/refresh/`
+- **Auth:** Public (`AllowAny`)
+
+#### Request Body
+```json
+{
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+#### Response (200 OK)
+```json
+{
+  "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...new_access_token...",
+  "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...new_rotated_refresh..."
+}
+```
+
+---
+
+### 1.6 Switch Role (Tenant / Landlord / Dual)
 - **Method:** `POST`
 - **Endpoint:** `/api/v1/auth/role/switch/`
 - **Auth:** Bearer Token (`IsAuthenticated`)
@@ -199,7 +223,7 @@ Returns JWT tokens and user profile object.
 
 ---
 
-### 1.6 Change Account Password
+### 1.7 Change Account Password
 - **Method:** `POST`
 - **Endpoint:** `/api/v1/auth/change-password/`
 - **Auth:** Bearer Token (`IsAuthenticated`)
@@ -227,7 +251,7 @@ Returns JWT tokens and user profile object.
 
 ---
 
-### 1.7 User Profile (Fetch & Update)
+### 1.8 User Profile (Fetch & Update)
 - **Method:** `GET` / `PATCH`
 - **Endpoint:** `/api/v1/auth/profile/`
 - **Auth:** Bearer Token (`IsAuthenticated`)
@@ -249,7 +273,7 @@ Returns complete updated user profile and nested KYC details.
 
 ---
 
-### 1.8 NID Identity Verification (KYC / Anti-Broker)
+### 1.9 NID Identity Verification (KYC / Anti-Broker)
 - **Method:** `POST`
 - **Endpoint:** `/api/v1/auth/nid-verify/`
 - **Auth:** Bearer Token (`IsAuthenticated`)
@@ -273,7 +297,7 @@ Returns complete updated user profile and nested KYC details.
 
 ---
 
-### 1.9 Logout
+### 1.10 Logout
 - **Method:** `POST`
 - **Endpoint:** `/api/v1/auth/logout/`
 - **Auth:** Bearer Token (`IsAuthenticated`)
@@ -1250,7 +1274,158 @@ Returns chat room object with room UUID.
 
 ---
 
-## 📊 Complete 52-Endpoint Audit Matrix
+---
+
+# 9. Super Admin & Operations Management
+
+All administrative endpoints are rooted at `/api/v1/admin/` and require superuser or staff authentication (`IsSuperAdminOrStaff`).
+
+### 9.1 Platform Overview & Real-Time Analytics
+- **Method:** `GET`
+- **Endpoint:** `/api/v1/admin/overview-stats/`
+- **Auth:** SuperAdmin / Staff
+- **Response (200 OK):** Real-time KPIs, user & listing growth, pending verification queues, and revenue metrics.
+
+---
+
+### 9.2 Landlord NID Verification Queue
+- **Method:** `GET`
+- **Endpoint:** `/api/v1/admin/nid-verifications/`
+- **Auth:** SuperAdmin / Staff
+- **Query Params:** `status` (`pending`, `approved`, `rejected`)
+- **Response (200 OK):** List of verification requests with submitted NID images, biometrics, and landlord details.
+
+---
+
+### 9.3 Approve Landlord NID Verification
+- **Method:** `POST`
+- **Endpoint:** `/api/v1/admin/nid-verifications/<str:pk>/approve/`
+- **Auth:** SuperAdmin / Staff
+- **Request Body:**
+```json
+{
+  "notes": "Verified via biometric face match and utility bill cross-check."
+}
+```
+- **Response (200 OK):** Verification approval record.
+
+---
+
+### 9.4 Reject Landlord NID / Flag Broker
+- **Method:** `POST`
+- **Endpoint:** `/api/v1/admin/nid-verifications/<str:pk>/reject/`
+- **Auth:** SuperAdmin / Staff
+- **Request Body:**
+```json
+{
+  "reason": "Utility bill name mismatch; suspected sub-broker."
+}
+```
+- **Response (200 OK):** Rejection record with audit trail.
+
+---
+
+### 9.5 Geo-Photo Validation Queue
+- **Method:** `GET`
+- **Endpoint:** `/api/v1/admin/geo-photos/`
+- **Auth:** SuperAdmin / Staff
+- **Response (200 OK):** List of photos with extracted EXIF GPS vs property registered location.
+
+---
+
+### 9.6 Verify Geo-Photo Coordinates
+- **Method:** `POST`
+- **Endpoint:** `/api/v1/admin/geo-photos/<str:pk>/verify/`
+- **Auth:** SuperAdmin / Staff
+- **Request Body:**
+```json
+{
+  "approved": true
+}
+```
+- **Response (200 OK):** Approval status and updates property `has_geo_tagged_photos`.
+
+---
+
+### 9.7 Property Moderation Queue
+- **Method:** `GET`
+- **Endpoint:** `/api/v1/admin/properties/`
+- **Auth:** SuperAdmin / Staff
+- **Query Params:** `status`, `category`
+- **Response (200 OK):** All listings with status and landlord history.
+
+---
+
+### 9.8 Update Property Moderation Status
+- **Method:** `PATCH`
+- **Endpoint:** `/api/v1/admin/properties/<str:pk>/status/`
+- **Auth:** SuperAdmin / Staff
+- **Request Body:**
+```json
+{
+  "status": "active"
+}
+```
+- **Response (200 OK):** Updated property record.
+
+---
+
+### 9.9 AI Spam & Duplicate Detector Queue
+- **Method:** `GET`
+- **Endpoint:** `/api/v1/admin/ai-spam-queue/`
+- **Auth:** SuperAdmin / Staff
+- **Response (200 OK):** AI-flagged duplicate or broker-spammed listings with similarity scores.
+
+---
+
+### 9.10 Resolve AI Spam Report
+- **Method:** `POST`
+- **Endpoint:** `/api/v1/admin/ai-spam-queue/<str:pk>/resolve/`
+- **Auth:** SuperAdmin / Staff
+- **Request Body:**
+```json
+{
+  "action": "listing_banned"
+}
+```
+- **Response (200 OK):** Resolution confirmation.
+
+---
+
+### 9.11 Demand vs Supply Heatmap Telemetry
+- **Method:** `GET`
+- **Endpoint:** `/api/v1/admin/analytics/demand-supply-heatmap/`
+- **Auth:** SuperAdmin / Staff
+- **Response (200 OK):** High-precision geospatial market density points for Mirpur, Dhanmondi, Gulshan, Uttara, Bashundhara.
+
+---
+
+### 9.12 User Directory & Anti-Broker Registry
+- **Method:** `GET`
+- **Endpoint:** `/api/v1/admin/users/`
+- **Auth:** SuperAdmin / Staff
+- **Query Params:** `role`, `search`
+- **Response (200 OK):** User directory list.
+
+---
+
+### 9.13 Toggle User Ban & Flag Broker
+- **Method:** `POST`
+- **Endpoint:** `/api/v1/admin/users/<str:pk>/ban/`
+- **Auth:** SuperAdmin / Staff
+- **Response (200 OK):** Updated user ban and broker status.
+
+---
+
+### 9.14 Digital Rent & Monetization Revenue Ledger
+- **Method:** `GET`
+- **Endpoint:** `/api/v1/admin/finance/ledger/`
+- **Auth:** SuperAdmin / Staff
+- **Response (200 OK):** All financial transactions, bills, boosts, and partner commissions.
+
+---
+
+## 📊 Complete 67-Endpoint Master Audit Matrix
 
 | # | HTTP Method | Endpoint URI | View Class | Module | Auth |
 | :- | :--- | :--- | :--- | :--- | :--- |
@@ -1258,51 +1433,67 @@ Returns chat room object with room UUID.
 | 2 | `POST` | `/api/v1/auth/otp/verify/` | `OTPVerifyView` | Accounts | Public |
 | 3 | `POST` | `/api/v1/auth/register/` | `RegisterView` | Accounts | Public |
 | 4 | `POST` | `/api/v1/auth/login/` | `PasswordLoginView` | Accounts | Public |
-| 5 | `POST` | `/api/v1/auth/role/switch/` | `RoleSwitchView` | Accounts | Bearer |
-| 6 | `POST` | `/api/v1/auth/change-password/` | `ChangePasswordView` | Accounts | Bearer |
-| 7 | `GET`, `PATCH` | `/api/v1/auth/profile/` | `UserProfileView` | Accounts | Bearer |
-| 8 | `POST` | `/api/v1/auth/nid-verify/` | `NIDVerifyView` | Accounts | Bearer |
-| 9 | `POST` | `/api/v1/auth/logout/` | `LogoutView` | Accounts | Bearer |
-| 10 | `GET`, `POST` | `/api/v1/properties/` | `PropertyListCreateView` | Properties | Public / Landlord |
-| 11 | `GET`, `PATCH`, `DELETE` | `/api/v1/properties/<uuid:pk>/` | `PropertyDetailView` | Properties | Public / Owner |
-| 12 | `POST` | `/api/v1/properties/<uuid:pk>/toggle-vault/` | `PropertyVaultToggleView` | Properties | Owner Landlord |
-| 13 | `POST` | `/api/v1/properties/<uuid:pk>/save/` | `PropertySaveToggleView` | Properties | Bearer |
-| 14 | `GET` | `/api/v1/properties/saved/` | `SavedPropertiesListView` | Properties | Bearer |
-| 15 | `POST` | `/api/v1/properties/<uuid:pk>/photos/` | `PropertyPhotoUploadView` | Properties | Owner Landlord |
-| 16 | `POST` | `/api/v1/properties/<uuid:pk>/confirm-availability/` | `ListingAvailabilityConfirmView` | Properties | Owner Landlord |
-| 17 | `POST` | `/api/v1/properties/<uuid:pk>/boost/` | `MonetizationBoostView` | Properties | Owner Landlord |
-| 18 | `GET`, `POST` | `/api/v1/properties/saved-searches/` | `SavedSearchListCreateView` | Properties | Bearer |
-| 19 | `GET` | `/api/v1/properties/saved-searches/alerts/` | `SavedSearchAlertListView` | Properties | Bearer |
-| 20 | `PATCH` | `/api/v1/properties/saved-searches/alerts/<uuid:pk>/read/` | `SavedSearchAlertMarkReadView` | Properties | Bearer |
-| 21 | `GET` | `/api/v1/properties/ai_search/` | `AISearchView` | Properties AI | Public |
-| 22 | `POST` | `/api/v1/properties/draw-search/` | `DrawOnMapSearchView` | Properties GIS | Public |
-| 23 | `POST` | `/api/v1/properties/compare/` | `PropertyCompareView` | Properties | Public |
-| 24 | `POST` | `/api/v1/properties/calculate-move-in/` | `MoveInCostCalculatorView` | Properties | Public |
-| 25 | `POST` | `/api/v1/properties/<uuid:pk>/move-in-cost/` | `MoveInCostCalculatorView` | Properties | Public |
-| 26 | `GET` | `/api/v1/properties/<uuid:pk>/fair-rent-meter/` | `AIFairRentMeterView` | Properties AI | Public |
-| 27 | `POST` | `/api/v1/properties/ai/classify-photo/` | `AIPhotoClassifierView` | Properties AI | Public |
-| 28 | `POST` | `/api/v1/properties/ai-generate-description/` | `AIListingWriterView` | Properties AI | Bearer |
-| 29 | `POST` | `/api/v1/properties/ai/generate-agreement/` | `AIRentAgreementGeneratorView` | Properties AI | Bearer |
-| 30 | `POST` | `/api/v1/properties/commute-calculator/` | `CommuteCalculatorView` | Properties GIS | Public |
-| 31 | `GET` | `/api/v1/properties/<uuid:pk>/nearby-essentials/` | `NearbyEssentialsView` | Properties GIS | Public |
-| 32 | `GET` | `/api/v1/properties/<uuid:pk>/street-view/` | `StreetViewPreviewView` | Properties GIS | Public |
-| 33 | `GET` | `/api/v1/properties/services/partners/` | `AffiliatePartnersView` | Services | Public |
-| 34 | `POST` | `/api/v1/properties/services/book/` | `BookPartnerServiceView` | Services | Bearer |
-| 35 | `POST` | `/api/v1/properties/admin/detect-spam/` | `AdminSpamDetectorView` | Admin AI | Public / Staff |
-| 36 | `GET` | `/api/v1/properties/analytics/demand-supply-heatmap/` | `DemandSupplyHeatmapView` | Analytics | Public |
-| 37 | `POST` | `/api/v1/inquiries/` | `InquiryCreateView` | Inquiries | Bearer |
-| 38 | `GET` | `/api/v1/inquiries/landlord-inbox/` | `LandlordScreeningInboxView` | Inquiries | Landlord |
-| 39 | `PATCH` | `/api/v1/inquiries/<uuid:pk>/status/` | `InquiryStatusUpdateView` | Inquiries | Landlord |
-| 40 | `GET`, `POST` | `/api/v1/inquiries/visits/` | `VisitBookingListCreateView` | Inquiries | Bearer |
-| 41 | `PATCH` | `/api/v1/inquiries/visits/<uuid:pk>/status/` | `VisitBookingStatusUpdateView` | Inquiries | Bearer |
-| 42 | `GET` | `/api/v1/insights/area/` | `AreaInsightsView` | Insights | Public |
-| 43 | `POST` | `/api/v1/insights/submit/` | `AreaInsightSubmitView` | Insights | Bearer |
-| 44 | `GET`, `POST` | `/api/v1/ledger/tenancies/` | `TenancyContractListCreateView` | Ledger | Bearer |
-| 45 | `GET`, `POST` | `/api/v1/ledger/bills/` | `RentBillListCreateView` | Ledger | Bearer |
-| 46 | `POST` | `/api/v1/ledger/bills/<uuid:pk>/mark-paid/` | `MarkBillPaidView` | Ledger | Landlord |
-| 47 | `GET` | `/api/v1/ledger/bills/<uuid:pk>/receipt/` | `RentReceiptDetailView` | Ledger | Bearer |
-| 48 | `POST` | `/api/v1/ledger/bills/<uuid:pk>/send-reminder/` | `SendBillReminderView` | Ledger | Landlord |
-| 49 | `GET`, `POST` | `/api/v1/chat/rooms/` | `ChatRoomListCreateView` | Chat | Bearer |
-| 50 | `GET`, `POST` | `/api/v1/chat/rooms/<uuid:pk>/messages/` | `ChatMessageListCreateView` | Chat | Bearer |
-| 51 | `POST` | `/api/v1/chat/rooms/<uuid:pk>/call-token/` | `MaskedCallTokenView` | Chat VoIP | Bearer |
-| 52 | `PATCH` | `/api/v1/chat/calls/<uuid:pk>/` | `MaskedCallSessionUpdateView` | Chat VoIP | Bearer |
+| 5 | `POST` | `/api/v1/auth/token/refresh/` | `TokenRefreshView` | Accounts | Public |
+| 6 | `POST` | `/api/v1/auth/role/switch/` | `RoleSwitchView` | Accounts | Bearer |
+| 7 | `POST` | `/api/v1/auth/change-password/` | `ChangePasswordView` | Accounts | Bearer |
+| 8 | `GET`, `PATCH` | `/api/v1/auth/profile/` | `UserProfileView` | Accounts | Bearer |
+| 9 | `POST` | `/api/v1/auth/nid-verify/` | `NIDVerifyView` | Accounts | Bearer |
+| 10 | `POST` | `/api/v1/auth/logout/` | `LogoutView` | Accounts | Bearer |
+| 11 | `GET`, `POST` | `/api/v1/properties/` | `PropertyListCreateView` | Properties | Public / Landlord |
+| 12 | `GET`, `PATCH`, `DELETE` | `/api/v1/properties/<uuid:pk>/` | `PropertyDetailView` | Properties | Public / Owner |
+| 13 | `POST` | `/api/v1/properties/<uuid:pk>/toggle-vault/` | `PropertyVaultToggleView` | Properties | Owner Landlord |
+| 14 | `POST` | `/api/v1/properties/<uuid:pk>/save/` | `PropertySaveToggleView` | Properties | Bearer |
+| 15 | `GET` | `/api/v1/properties/saved/` | `SavedPropertiesListView` | Properties | Bearer |
+| 16 | `POST` | `/api/v1/properties/<uuid:pk>/photos/` | `PropertyPhotoUploadView` | Properties | Owner Landlord |
+| 17 | `POST` | `/api/v1/properties/<uuid:pk>/confirm-availability/` | `ListingAvailabilityConfirmView` | Properties | Owner Landlord |
+| 18 | `POST` | `/api/v1/properties/<uuid:pk>/boost/` | `MonetizationBoostView` | Properties | Owner Landlord |
+| 19 | `GET`, `POST` | `/api/v1/properties/saved-searches/` | `SavedSearchListCreateView` | Properties | Bearer |
+| 20 | `GET` | `/api/v1/properties/saved-searches/alerts/` | `SavedSearchAlertListView` | Properties | Bearer |
+| 21 | `PATCH` | `/api/v1/properties/saved-searches/alerts/<uuid:pk>/read/` | `SavedSearchAlertMarkReadView` | Properties | Bearer |
+| 22 | `GET` | `/api/v1/properties/ai_search/` | `AISearchView` | Properties AI | Public |
+| 23 | `POST` | `/api/v1/properties/draw-search/` | `DrawOnMapSearchView` | Properties GIS | Public |
+| 24 | `POST` | `/api/v1/properties/compare/` | `PropertyCompareView` | Properties | Public |
+| 25 | `POST` | `/api/v1/properties/calculate-move-in/` | `MoveInCostCalculatorView` | Properties | Public |
+| 26 | `POST` | `/api/v1/properties/<uuid:pk>/move-in-cost/` | `MoveInCostCalculatorView` | Properties | Public |
+| 27 | `GET` | `/api/v1/properties/<uuid:pk>/fair-rent-meter/` | `AIFairRentMeterView` | Properties AI | Public |
+| 28 | `POST` | `/api/v1/properties/ai/classify-photo/` | `AIPhotoClassifierView` | Properties AI | Public |
+| 29 | `POST` | `/api/v1/properties/ai-generate-description/` | `AIListingWriterView` | Properties AI | Bearer |
+| 30 | `POST` | `/api/v1/properties/ai/generate-agreement/` | `AIRentAgreementGeneratorView` | Properties AI | Bearer |
+| 31 | `POST` | `/api/v1/properties/commute-calculator/` | `CommuteCalculatorView` | Properties GIS | Public |
+| 32 | `GET` | `/api/v1/properties/<uuid:pk>/nearby-essentials/` | `NearbyEssentialsView` | Properties GIS | Public |
+| 33 | `GET` | `/api/v1/properties/<uuid:pk>/street-view/` | `StreetViewPreviewView` | Properties GIS | Public |
+| 34 | `GET` | `/api/v1/properties/services/partners/` | `AffiliatePartnersView` | Services | Public |
+| 35 | `POST` | `/api/v1/properties/services/book/` | `BookPartnerServiceView` | Services | Bearer |
+| 36 | `POST` | `/api/v1/properties/admin/detect-spam/` | `AdminSpamDetectorView` | Admin AI | Public / Staff |
+| 37 | `GET` | `/api/v1/properties/analytics/demand-supply-heatmap/` | `DemandSupplyHeatmapView` | Analytics | Public |
+| 38 | `POST` | `/api/v1/inquiries/` | `InquiryCreateView` | Inquiries | Bearer |
+| 39 | `GET` | `/api/v1/inquiries/landlord-inbox/` | `LandlordScreeningInboxView` | Inquiries | Landlord |
+| 40 | `PATCH` | `/api/v1/inquiries/<uuid:pk>/status/` | `InquiryStatusUpdateView` | Inquiries | Landlord |
+| 41 | `GET`, `POST` | `/api/v1/inquiries/visits/` | `VisitBookingListCreateView` | Inquiries | Bearer |
+| 42 | `PATCH` | `/api/v1/inquiries/visits/<uuid:pk>/status/` | `VisitBookingStatusUpdateView` | Inquiries | Bearer |
+| 43 | `GET` | `/api/v1/insights/area/` | `AreaInsightsView` | Insights | Public |
+| 44 | `POST` | `/api/v1/insights/submit/` | `AreaInsightSubmitView` | Insights | Bearer |
+| 45 | `GET`, `POST` | `/api/v1/ledger/tenancies/` | `TenancyContractListCreateView` | Ledger | Bearer |
+| 46 | `GET`, `POST` | `/api/v1/ledger/bills/` | `RentBillListCreateView` | Ledger | Bearer |
+| 47 | `POST` | `/api/v1/ledger/bills/<uuid:pk>/mark-paid/` | `MarkBillPaidView` | Ledger | Landlord |
+| 48 | `GET` | `/api/v1/ledger/bills/<uuid:pk>/receipt/` | `RentReceiptDetailView` | Ledger | Bearer |
+| 49 | `POST` | `/api/v1/ledger/bills/<uuid:pk>/send-reminder/` | `SendBillReminderView` | Ledger | Landlord |
+| 50 | `GET`, `POST` | `/api/v1/chat/rooms/` | `ChatRoomListCreateView` | Chat | Bearer |
+| 51 | `GET`, `POST` | `/api/v1/chat/rooms/<uuid:pk>/messages/` | `ChatMessageListCreateView` | Chat | Bearer |
+| 52 | `POST` | `/api/v1/chat/rooms/<uuid:pk>/call-token/` | `MaskedCallTokenView` | Chat VoIP | Bearer |
+| 53 | `PATCH` | `/api/v1/chat/calls/<uuid:pk>/` | `MaskedCallSessionUpdateView` | Chat VoIP | Bearer |
+| 54 | `GET` | `/api/v1/admin/overview-stats/` | `AdminOverviewStatsView` | Admin | SuperAdmin / Staff |
+| 55 | `GET` | `/api/v1/admin/nid-verifications/` | `AdminNIDVerificationListView` | Admin | SuperAdmin / Staff |
+| 56 | `POST` | `/api/v1/admin/nid-verifications/<str:pk>/approve/` | `AdminNIDApproveView` | Admin | SuperAdmin / Staff |
+| 57 | `POST` | `/api/v1/admin/nid-verifications/<str:pk>/reject/` | `AdminNIDRejectView` | Admin | SuperAdmin / Staff |
+| 58 | `GET` | `/api/v1/admin/geo-photos/` | `AdminGeoPhotosListView` | Admin | SuperAdmin / Staff |
+| 59 | `POST` | `/api/v1/admin/geo-photos/<str:pk>/verify/` | `AdminGeoPhotoVerifyView` | Admin | SuperAdmin / Staff |
+| 60 | `GET` | `/api/v1/admin/properties/` | `AdminPropertyListView` | Admin | SuperAdmin / Staff |
+| 61 | `PATCH` | `/api/v1/admin/properties/<str:pk>/status/` | `AdminPropertyStatusUpdateView` | Admin | SuperAdmin / Staff |
+| 62 | `GET` | `/api/v1/admin/ai-spam-queue/` | `AdminSpamQueueListView` | Admin | SuperAdmin / Staff |
+| 63 | `POST` | `/api/v1/admin/ai-spam-queue/<str:pk>/resolve/` | `AdminSpamQueueResolveView` | Admin | SuperAdmin / Staff |
+| 64 | `GET` | `/api/v1/admin/analytics/demand-supply-heatmap/` | `AdminDemandSupplyHeatmapView` | Admin | SuperAdmin / Staff |
+| 65 | `GET` | `/api/v1/admin/users/` | `AdminUserListView` | Admin | SuperAdmin / Staff |
+| 66 | `POST` | `/api/v1/admin/users/<str:pk>/ban/` | `AdminUserBanToggleView` | Admin | SuperAdmin / Staff |
+| 67 | `GET` | `/api/v1/admin/finance/ledger/` | `AdminFinanceLedgerView` | Admin | SuperAdmin / Staff |
+

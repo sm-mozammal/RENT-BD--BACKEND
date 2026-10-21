@@ -17,6 +17,7 @@ try:
 except (ImportError, ModuleNotFoundError):
     from ..common.pagination import StandardResultsSetPagination
 
+from apps.accounts.models import User
 from .models import Property, PropertyImage, SavedProperty, SavedSearch, SavedSearchAlert
 from .serializers import (
     PropertySerializer,
@@ -59,6 +60,8 @@ class PropertyListCreateView(APIView):
             OpenApiParameter('max_rent', float, description="Maximum monthly rent in BDT"),
             OpenApiParameter('bedrooms', int, description="Number of bedrooms"),
             OpenApiParameter('vault', bool, description="If true, shows landlord's rented/vault listings"),
+            OpenApiParameter('my_properties', bool, description="If true, filters to only listings created by the authenticated user"),
+            OpenApiParameter('all', bool, description="If true, bypasses landlord auto-filter to view public marketplace"),
         ],
         responses={200: PropertySerializer(many=True)},
     )
@@ -66,10 +69,36 @@ class PropertyListCreateView(APIView):
         queryset = Property.objects.select_related('landlord', 'landlord__landlord_profile').prefetch_related('images')
 
         is_vault = request.query_params.get('vault', 'false').lower() == 'true'
-        if is_vault and request.user.is_authenticated:
-            queryset = queryset.filter(landlord=request.user, is_available=False)
-        elif not is_vault:
-            queryset = queryset.filter(is_available=True)
+        is_all = request.query_params.get('all', 'false').lower() == 'true'
+        my_properties = (
+            request.query_params.get('my_properties', '').lower() == 'true' or
+            request.query_params.get('mine', '').lower() == 'true'
+        )
+
+        is_landlord_view = (
+            request.user.is_authenticated and
+            not is_all and
+            (getattr(request.user, 'role', '').lower() == User.Role.LANDLORD or my_properties)
+        )
+
+        if is_landlord_view:
+            queryset = queryset.filter(landlord=request.user)
+            if is_vault:
+                queryset = queryset.filter(is_available=False, status='rented')
+            elif request.query_params.get('status'):
+                queryset = queryset.filter(status=request.query_params.get('status').lower())
+            elif request.query_params.get('is_available') is not None:
+                avail_val = request.query_params.get('is_available').lower()
+                if avail_val != 'all':
+                    queryset = queryset.filter(is_available=(avail_val == 'true'))
+            elif request.query_params.get('show_all', '').lower() != 'true':
+                # Landlord sees their listings (active and pending approval), excluding rented
+                queryset = queryset.exclude(status='rented')
+        else:
+            if is_vault and request.user.is_authenticated:
+                queryset = queryset.filter(landlord=request.user, is_available=False)
+            elif not is_vault:
+                queryset = queryset.filter(is_available=True, status='active')
 
         category = request.query_params.get('tenant_category') or request.query_params.get('category')
         if category:
@@ -148,8 +177,9 @@ class PropertyListCreateView(APIView):
             lp.total_listings = Property.objects.filter(landlord=request.user).count()
             lp.save(update_fields=['total_listings'])
 
-        # Trigger instant alerts to tenants who saved matching criteria
-        trigger_saved_search_alerts(property_obj)
+        # Trigger instant alerts to tenants who saved matching criteria (only if immediately active)
+        if property_obj.status == Property.ModerationStatus.ACTIVE and property_obj.is_available:
+            trigger_saved_search_alerts(property_obj)
 
         response_serializer = PropertySerializer(property_obj, context={'request': request})
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)

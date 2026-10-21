@@ -144,7 +144,18 @@ class QuickPostSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         photo_urls = validated_data.pop('photo_urls', [])
         landlord = self.context['request'].user
-        property_obj = Property.objects.create(landlord=landlord, **validated_data)
+
+        # Landlord listings enter pending_approval awaiting admin verification
+        is_admin = getattr(landlord, 'is_staff', False) or getattr(landlord, 'is_superuser', False)
+        status = Property.ModerationStatus.ACTIVE if is_admin else Property.ModerationStatus.PENDING_APPROVAL
+        is_available = True if is_admin else False
+
+        property_obj = Property.objects.create(
+            landlord=landlord,
+            status=status,
+            is_available=is_available,
+            **validated_data
+        )
 
         for idx, url in enumerate(photo_urls):
             category = PropertyImage.RoomType.LIVING_ROOM

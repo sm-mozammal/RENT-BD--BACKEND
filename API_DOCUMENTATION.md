@@ -315,8 +315,16 @@ Base URI: `/api/v1/properties/`
 
 ### 2.1 List & Filter Properties / Create Listing
 * **Route:** `GET /api/v1/properties/` | `POST /api/v1/properties/`
-* **Permission:** `GET` Public | `POST` Landlord
+* **Permission:** `GET` Public / Authenticated | `POST` Landlord
+* **Landlord Scoping Behavior:**
+  - When called by an authenticated **Landlord** (`role == 'landlord'`), the API automatically returns **only the properties created by that landlord**.
+  - Pass `?all=true` if a landlord user wants to browse the public marketplace across all landlords.
+  - Pass `?vault=true` to view the landlord's off-market/rented listings.
+  - Pass `?my_properties=true` to explicitly filter to own listings regardless of role.
 * **GET Query Parameters:**
+  - `vault` (`true`/`false`): If true, returns landlord's rented/vault listings.
+  - `my_properties` (`true`/`false`): Filters listings to those created by the caller.
+  - `all` (`true`/`false`): When true, overrides the landlord scope to view all public listings.
   - `city` (e.g., `Dhaka`)
   - `area` (e.g., `Mirpur 10`)
   - `property_type` (`APARTMENT`, `SUBLET`, `COMMERCIAL`, `ROOM`, `HOSTEL`)
@@ -349,6 +357,9 @@ Base URI: `/api/v1/properties/`
   "has_line_gas": true
 }
 ```
+* **Moderation Lifecycle:**
+  - When posted by a regular landlord (`POST /api/v1/properties/`), listings automatically enter `status = "pending_approval"` and `is_available = false` until reviewed and approved by an administrator. (Staff / SuperAdmin posts bypass moderation as `"active"`).
+  - Landlords can immediately view their own `pending_approval` listings on `GET /api/v1/properties/`, while public and tenant users cannot view them until approved.
 * **Response (201 Created):**
 ```json
 {
@@ -356,8 +367,8 @@ Base URI: `/api/v1/properties/`
   "title": "Modern 3-Bed Apartment near Metro Station",
   "rent_amount": "24000.00",
   "security_deposit": "48000.00",
-  "status": "active",
-  "is_available": true,
+  "status": "pending_approval",
+  "is_available": false,
   "fair_price_status": "FAIR_PRICE",
   "created_at": "2026-10-21T18:00:00Z"
 }
@@ -1329,6 +1340,10 @@ Base URI: `/api/v1/admin/`
 }
 ```
 * **Response (200 OK):** Updated property object.
+* **Status Transitions & Automated Alerts:**
+  - `status: "active"`: Sets `is_available = true`, publishes the listing to the public marketplace, and automatically triggers instant notifications to tenants with matching saved searches.
+  - `status: "rejected"` or `"pending_approval"`: Sets `is_available = false` (hidden from public searches).
+  - `status: "rented"`: Sets `is_available = false` (accessible in Landlord Vault).
 
 ---
 

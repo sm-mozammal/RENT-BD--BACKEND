@@ -322,9 +322,13 @@ Returns complete updated user profile and nested KYC details.
 ### 2.1 List & Filter Properties
 - **Method:** `GET`
 - **Endpoint:** `/api/v1/properties/`
-- **Auth:** Optional (Include Bearer token to populate `is_saved` wishlist flags)
+- **Auth:** Optional / Bearer Token
+- **Landlord Scope:** When called by an authenticated Landlord (`role == 'landlord'`), the endpoint automatically returns **only the properties created by that landlord**. (Pass `?all=true` to view public marketplace listings).
 
 #### Query Parameters
+- `vault` (boolean): If `true`, returns landlord's off-market/rented listings.
+- `my_properties` (boolean): Explicitly filters to own listings regardless of role.
+- `all` (boolean): Bypasses landlord auto-filter to view all public listings.
 - `search` (string): Text query across title, description, and address
 - `area` (string): `mirpur_10`, `uttara`, `dhanmondi`, `gulshan_1`, `bashundhara_ra`
 - `property_type` (string): `family`, `bachelor`, `sublet`, `hostel`, `office`, `shop`
@@ -403,7 +407,10 @@ Returns complete updated user profile and nested KYC details.
 }
 ```
 #### Response (201 Created)
-Returns complete created property object with assigned UUID.
+Returns complete created property object with assigned UUID (`status: "pending_approval"`, `is_available: false`).
+
+> [!NOTE]
+> **Admin Verification Workflow:** When a regular landlord posts a listing, it is created with `status: "pending_approval"` and `is_available: false`. Landlords can immediately view their own pending listings under `GET /api/v1/properties/`, but public marketplace users and tenants cannot view the property until an admin approves it (`status = "active"`). Listings posted by SuperAdmins or Staff are immediately activated.
 
 ---
 
@@ -1367,6 +1374,10 @@ All administrative endpoints are rooted at `/api/v1/admin/` and require superuse
 }
 ```
 - **Response (200 OK):** Updated property record.
+- **Admin Verification Workflow:**
+  - Transitioning to `status: "active"` sets `is_available: true`, publishes listing to the public marketplace, and immediately triggers instant alerts to all tenants with matching saved searches.
+  - Transitioning to `status: "rejected"` or `"pending_approval"` keeps `is_available: false` (hidden from public searches).
+  - Transitioning to `status: "rented"` moves the property to the Landlord's Vault.
 
 ---
 

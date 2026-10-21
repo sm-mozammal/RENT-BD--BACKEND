@@ -98,6 +98,48 @@ class PropertyApiTests(TestCase):
         self.assertIn('3-Bed Family Uttara', titles)
         self.assertNotIn('2-Bed Bachelor Mirpur', titles)
 
+    def test_landlord_sees_only_own_properties(self):
+        # Create second landlord with their own property
+        landlord2 = User.objects.create_user(
+            phone_number='+8801700000088',
+            full_name='Second Landlord',
+            role=User.Role.LANDLORD,
+        )
+        prop_other = Property.objects.create(
+            landlord=landlord2,
+            title='Other Landlord Flat in Gulshan',
+            description='Exclusive flat',
+            tenant_category=Property.TenantCategory.FAMILY,
+            rent_amount=Decimal('45000.00'),
+            security_deposit=Decimal('90000.00'),
+            area_neighborhood='Gulshan 2',
+            full_address='Gulshan 2, Dhaka',
+            is_available=True,
+        )
+
+        # 1. When self.landlord calls GET property-list-create, only self.landlord's properties are returned
+        self.client.force_authenticate(user=self.landlord)
+        url = reverse('property-list-create')
+        res = self.client.get(url, format='json')
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        titles = [p['title'] for p in res.data]
+        self.assertIn('2-Bed Bachelor Mirpur', titles)
+        self.assertIn('3-Bed Family Uttara', titles)
+        self.assertNotIn('Other Landlord Flat in Gulshan', titles)
+
+        # 2. When passing all=true, landlord can see all public properties
+        res_all = self.client.get(url, {'all': 'true'}, format='json')
+        self.assertEqual(res_all.status_code, status.HTTP_200_OK)
+        all_titles = [p['title'] for p in res_all.data]
+        self.assertIn('Other Landlord Flat in Gulshan', all_titles)
+
+        # 3. Unauthenticated public/tenant user sees all available properties
+        self.client.logout()
+        res_public = self.client.get(url, format='json')
+        self.assertEqual(res_public.status_code, status.HTTP_200_OK)
+        public_titles = [p['title'] for p in res_public.data]
+        self.assertIn('Other Landlord Flat in Gulshan', public_titles)
+
     def test_quick_post_property(self):
         self.client.force_authenticate(user=self.landlord)
         url = reverse('property-list-create')
@@ -129,6 +171,8 @@ class PropertyApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertEqual(res.data['title'], 'New 2-Bed Flat')
         self.assertEqual(len(res.data['images']), 2)
+        self.assertEqual(res.data['status'], 'pending_approval')
+        self.assertFalse(res.data['is_available'])
 
     def test_quick_post_unverified_landlord_rejected(self):
         unverified_landlord = User.objects.create_user(
@@ -419,14 +463,97 @@ class PropertyApiTests(TestCase):
             'bedrooms': 2,
         }, format='json')
         self.assertEqual(post_res.status_code, status.HTTP_201_CREATED)
+        property_id = post_res.data['id']
+        self.assertEqual(post_res.data['status'], 'pending_approval')
+        self.assertFalse(post_res.data['is_available'])
 
-        # 3. Tenant checks instant alerts endpoint
+        # 3. Before admin approval, tenant does not receive alert for pending listing
         self.client.force_authenticate(user=self.tenant)
         alerts_url = reverse('saved-search-alerts')
+        alerts_res_before = self.client.get(alerts_url, format='json')
+        self.assertEqual(alerts_res_before.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(alerts_res_before.data), 0)
+
+        # 4. Admin approves the property to 'active'
+        admin_user = User.objects.create_superuser(
+            phone_number='+8801700000000',
+            full_name='Super Admin',
+            password='adminpassword123',
+        )
+        self.client.force_authenticate(user=admin_user)
+        approve_url = reverse('admin-properties-status', kwargs={'pk': property_id})
+        approve_res = self.client.patch(approve_url, {'status': 'active'}, format='json')
+        self.assertEqual(approve_res.status_code, status.HTTP_200_OK)
+        self.assertEqual(approve_res.data['status'], 'active')
+        self.assertTrue(approve_res.data['is_available'])
+
+        # 5. Tenant checks instant alerts endpoint after approval
+        self.client.force_authenticate(user=self.tenant)
         alerts_res = self.client.get(alerts_url, format='json')
         self.assertEqual(alerts_res.status_code, status.HTTP_200_OK)
         self.assertGreater(len(alerts_res.data), 0)
         self.assertIn('Banani', alerts_res.data[0]['title'])
+
+    def test_admin_property_approval_workflow(self):
+        # 1. Landlord posts property
+        self.client.force_authenticate(user=self.landlord)
+        post_url = reverse('property-list-create')
+        post_res = self.client.post(post_url, {
+            'title': 'Dhanmondi Lake View',
+            'rent_amount': 35000.0,
+            'security_deposit': 70000.0,
+            'area_neighborhood': 'Dhanmondi',
+            'full_address': 'Road 27, Dhanmondi, Dhaka',
+            'bedrooms': 3,
+        }, format='json')
+        self.assertEqual(post_res.status_code, status.HTTP_201_CREATED)
+        property_id = post_res.data['id']
+        self.assertEqual(post_res.data['status'], 'pending_approval')
+        self.assertFalse(post_res.data['is_available'])
+
+        # 2. Public marketplace (unauthenticated / tenant) cannot see the pending listing
+        self.client.logout()
+        res_public = self.client.get(post_url, format='json')
+        public_titles = [p['title'] for p in res_public.data]
+        self.assertNotIn('Dhanmondi Lake View', public_titles)
+
+        # 3. Landlord CAN see their own pending listing in their properties list
+        self.client.force_authenticate(user=self.landlord)
+        res_landlord = self.client.get(post_url, format='json')
+        landlord_titles = [p['title'] for p in res_landlord.data]
+        self.assertIn('Dhanmondi Lake View', landlord_titles)
+
+        # 4. Admin approves the listing
+        admin_user = User.objects.create_superuser(
+            phone_number='+8801700000003',
+            full_name='Admin User',
+            password='adminpassword123',
+        )
+        self.client.force_authenticate(user=admin_user)
+        status_url = reverse('admin-properties-status', kwargs={'pk': property_id})
+        approve_res = self.client.patch(status_url, {'status': 'active'}, format='json')
+        self.assertEqual(approve_res.status_code, status.HTTP_200_OK)
+        self.assertEqual(approve_res.data['status'], 'active')
+        self.assertTrue(approve_res.data['is_available'])
+
+        # 5. Public / tenant can now see the listing on the marketplace
+        self.client.force_authenticate(user=self.tenant)
+        res_tenant = self.client.get(post_url, format='json')
+        tenant_titles = [p['title'] for p in res_tenant.data]
+        self.assertIn('Dhanmondi Lake View', tenant_titles)
+
+        # 6. Admin can reject listing if needed
+        self.client.force_authenticate(user=admin_user)
+        reject_res = self.client.patch(status_url, {'status': 'rejected'}, format='json')
+        self.assertEqual(reject_res.status_code, status.HTTP_200_OK)
+        self.assertEqual(reject_res.data['status'], 'rejected')
+        self.assertFalse(reject_res.data['is_available'])
+
+        # 7. Public cannot see rejected listing
+        self.client.logout()
+        res_public_after_reject = self.client.get(post_url, format='json')
+        public_titles_after = [p['title'] for p in res_public_after_reject.data]
+        self.assertNotIn('Dhanmondi Lake View', public_titles_after)
 
     def test_multilingual_natural_language_search(self):
         url = reverse('property-ai-search')

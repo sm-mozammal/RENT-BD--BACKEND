@@ -10,6 +10,7 @@ from drf_spectacular.utils import extend_schema, OpenApiResponse
 
 from apps.accounts.models import User
 from apps.properties.models import Property
+from apps.properties.alerts import trigger_saved_search_alerts
 from apps.ledger.models import TenancyContract, RentBill
 from .models import NIDVerificationRequest, GeoPhotoVerification, SpamReport
 from .permissions import IsSuperAdminOrStaff
@@ -230,6 +231,7 @@ class AdminPropertyStatusUpdateView(APIView):
         new_status = serializer.validated_data['status']
 
         prop = get_object_or_404(Property, pk=pk)
+        previous_status = prop.status
         prop.status = new_status
         if new_status == 'rented':
             prop.is_available = False
@@ -237,8 +239,15 @@ class AdminPropertyStatusUpdateView(APIView):
             prop.is_available = True
         elif new_status == 'rejected':
             prop.is_available = False
+        elif new_status == 'pending_approval':
+            prop.is_available = False
 
         prop.save(update_fields=['status', 'is_available'])
+
+        # Notify matching tenants when listing is approved and becomes active
+        if new_status == 'active' and previous_status != 'active':
+            trigger_saved_search_alerts(prop)
+
         return Response(AdminPropertySerializer(prop).data, status=status.HTTP_200_OK)
 
 

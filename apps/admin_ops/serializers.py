@@ -14,13 +14,26 @@ class AdminOverviewStatsSerializer(serializers.Serializer):
     active_listings = serializers.IntegerField()
     listings_growth_pct = serializers.FloatField()
     pending_nid_count = serializers.IntegerField()
+    pending_geo_count = serializers.IntegerField(required=False)
     pending_spam_count = serializers.IntegerField()
+    pending_property_count = serializers.IntegerField(required=False)
     total_revenue_bdt = serializers.DecimalField(max_digits=12, decimal_places=2)
     revenue_growth_pct = serializers.FloatField()
     rent_agreements_generated = serializers.IntegerField()
+    average_monthly_rent_bdt = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     fair_rent_breakdown = serializers.DictField()
     category_breakdown = serializers.DictField()
     monthly_revenue_history = serializers.ListField(child=serializers.DictField())
+    users_analytics = serializers.DictField(required=False)
+    properties_analytics = serializers.DictField(required=False)
+    finance_analytics = serializers.DictField(required=False)
+    top_demand_supply_areas = serializers.ListField(child=serializers.DictField(), required=False)
+    recent_activity = serializers.DictField(required=False)
+
+
+class AdminDashboardAnalyticsSerializer(AdminOverviewStatsSerializer):
+    """Full comprehensive analytics serializer for Admin Dashboard."""
+    pass
 
 
 class NIDVerificationRequestSerializer(serializers.ModelSerializer):

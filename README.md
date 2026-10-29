@@ -1287,11 +1287,18 @@ Returns chat room object with room UUID.
 
 All administrative endpoints are rooted at `/api/v1/admin/` and require superuser or staff authentication (`IsSuperAdminOrStaff`).
 
-### 9.1 Platform Overview & Real-Time Analytics
+### 9.1 Platform Overview & Complete Analytics Dashboard
 - **Method:** `GET`
-- **Endpoint:** `/api/v1/admin/overview-stats/`
+- **Endpoint:** `/api/v1/admin/analytics/dashboard/` (or `/api/v1/admin/overview-stats/`)
 - **Auth:** SuperAdmin / Staff
-- **Response (200 OK):** Real-time KPIs, user & listing growth, pending verification queues, and revenue metrics.
+- **Response (200 OK):** Comprehensive dashboard analytics:
+  - **Core KPIs:** `total_users`, `active_listings`, `total_revenue_bdt`, `average_monthly_rent_bdt`, `rent_agreements_generated`
+  - **Queue Counters:** `pending_nid_count`, `pending_geo_count`, `pending_spam_count`, `pending_property_count`
+  - **Modular Breakdowns:** `users_analytics`, `properties_analytics`, `finance_analytics`
+  - **Distributions:** `category_breakdown` (family, bachelor, sublet, hostel, duplex), `fair_rent_breakdown` (fair_price, great_deal, overpriced)
+  - **Geospatial Telemetry:** `top_demand_supply_areas` (market pressure and search ratios)
+  - **Trends:** `monthly_revenue_history` (multi-month trend with listings and new user growth)
+  - **Activity Feed:** `recent_activity` (latest pending NIDs, pending properties, and spam flags)
 
 ---
 

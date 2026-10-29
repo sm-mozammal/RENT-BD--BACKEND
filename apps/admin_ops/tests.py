@@ -177,6 +177,49 @@ class SuperAdminAPITests(APITestCase):
         self.assertIn('category_breakdown', res.data)
         self.assertIn('monthly_revenue_history', res.data)
 
+    def test_dashboard_analytics_api(self):
+        # 1. Non-admin forbidden
+        self.client.force_authenticate(user=self.tenant)
+        url = reverse('admin-dashboard-analytics')
+        res_forbidden = self.client.get(url, format='json')
+        self.assertEqual(res_forbidden.status_code, status.HTTP_403_FORBIDDEN)
+
+        # 2. Admin access
+        self.client.force_authenticate(user=self.admin_user)
+        res = self.client.get(url, format='json')
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        # Verify Core KPIs
+        self.assertIn('total_users', res.data)
+        self.assertIn('active_listings', res.data)
+        self.assertIn('total_revenue_bdt', res.data)
+        self.assertIn('average_monthly_rent_bdt', res.data)
+        self.assertIn('pending_nid_count', res.data)
+        self.assertIn('pending_geo_count', res.data)
+        self.assertIn('pending_spam_count', res.data)
+        self.assertIn('pending_property_count', res.data)
+
+        # Verify Detailed Modules
+        self.assertIn('users_analytics', res.data)
+        self.assertIn('tenants_count', res.data['users_analytics'])
+        self.assertIn('landlords_count', res.data['users_analytics'])
+
+        self.assertIn('properties_analytics', res.data)
+        self.assertIn('total_properties', res.data['properties_analytics'])
+        self.assertIn('active_listings', res.data['properties_analytics'])
+
+        self.assertIn('finance_analytics', res.data)
+        self.assertIn('total_revenue_bdt', res.data['finance_analytics'])
+        self.assertIn('collection_rate_pct', res.data['finance_analytics'])
+
+        self.assertIn('top_demand_supply_areas', res.data)
+        self.assertGreater(len(res.data['top_demand_supply_areas']), 0)
+
+        self.assertIn('recent_activity', res.data)
+        self.assertIn('recent_pending_nids', res.data['recent_activity'])
+        self.assertIn('recent_pending_properties', res.data['recent_activity'])
+        self.assertIn('recent_spam_reports', res.data['recent_activity'])
+
     def test_8_3_nid_verification_list_and_approve(self):
         self.client.force_authenticate(user=self.admin_user)
         # List

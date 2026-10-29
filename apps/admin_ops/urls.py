@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
     AdminOverviewStatsView,
+    AdminDashboardAnalyticsView,
     AdminNIDVerificationListView,
     AdminNIDApproveView,
     AdminNIDRejectView,
@@ -19,6 +20,8 @@ from .views import (
 urlpatterns = [
     # 8.2 Dashboard Overview & Analytics
     path('overview-stats/', AdminOverviewStatsView.as_view(), name='admin-overview-stats'),
+    path('analytics/dashboard/', AdminDashboardAnalyticsView.as_view(), name='admin-dashboard-analytics'),
+    path('dashboard/analytics/', AdminDashboardAnalyticsView.as_view(), name='admin-dashboard-analytics-alt'),
 
     # 8.3 Landlord NID Verification Queue
     path('nid-verifications/', AdminNIDVerificationListView.as_view(), name='admin-nid-verifications'),

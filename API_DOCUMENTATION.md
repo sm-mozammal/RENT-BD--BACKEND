@@ -1213,8 +1213,8 @@ Base URI: `/api/v1/chat/`
 Base URI: `/api/v1/admin/`  
 **Permission:** Super Admin or Staff (`IsSuperAdminOrStaff`)
 
-### 11.1 Dashboard Overview & Analytics Aggregates
-* **Route:** `GET /api/v1/admin/overview-stats/`
+### 11.1 Dashboard Overview & Complete Analytics Aggregates
+* **Route:** `GET /api/v1/admin/analytics/dashboard/` | `GET /api/v1/admin/overview-stats/`
 * **Permission:** SuperAdmin / Staff
 * **Response (200 OK):**
 ```json
@@ -1224,10 +1224,42 @@ Base URI: `/api/v1/admin/`
   "active_listings": 3280,
   "listings_growth_pct": 22.4,
   "pending_nid_count": 38,
+  "pending_geo_count": 12,
   "pending_spam_count": 14,
+  "pending_property_count": 25,
   "total_revenue_bdt": "4825000.00",
   "revenue_growth_pct": 18.2,
   "rent_agreements_generated": 1420,
+  "average_monthly_rent_bdt": "24500.00",
+  "users_analytics": {
+    "total_users": 18450,
+    "tenants_count": 13200,
+    "landlords_count": 4850,
+    "dual_role_count": 400,
+    "verified_landlords_count": 3950,
+    "flagged_brokers_count": 18,
+    "growth_pct": 14.8,
+    "active_contracts_count": 1420
+  },
+  "properties_analytics": {
+    "total_properties": 3650,
+    "active_listings": 3280,
+    "pending_approval": 25,
+    "rented_in_vault": 310,
+    "rejected": 20,
+    "flagged_spam": 15,
+    "growth_pct": 22.4,
+    "average_rent_bdt": 24500.0
+  },
+  "finance_analytics": {
+    "total_revenue_bdt": "4825000.00",
+    "growth_pct": 18.2,
+    "bills_paid_count": 1380,
+    "bills_pending_count": 120,
+    "bills_overdue_count": 35,
+    "collection_rate_pct": 96.2,
+    "total_platform_commission_bdt": "241250.00"
+  },
   "fair_rent_breakdown": {
     "fair_price": 2180,
     "great_deal": 760,
@@ -1236,12 +1268,34 @@ Base URI: `/api/v1/admin/`
   "category_breakdown": {
     "family": 1940,
     "bachelor": 980,
-    "sublet": 360
+    "sublet": 360,
+    "hostel": 80,
+    "duplex": 45
   },
   "monthly_revenue_history": [
-    {"month": "May 2026", "revenue": 3100000, "listings": 2100},
-    {"month": "Oct 2026", "revenue": 4825000, "listings": 3280}
-  ]
+    {"month": "May 2026", "revenue": 3100000, "listings": 2100, "new_users": 1250},
+    {"month": "Jun 2026", "revenue": 3450000, "listings": 2350, "new_users": 1420},
+    {"month": "Jul 2026", "revenue": 3720000, "listings": 2580, "new_users": 1600},
+    {"month": "Aug 2026", "revenue": 4150000, "listings": 2890, "new_users": 1780},
+    {"month": "Sep 2026", "revenue": 4480000, "listings": 3050, "new_users": 1910},
+    {"month": "Oct 2026", "revenue": 4825000, "listings": 3280, "new_users": 2080}
+  ],
+  "top_demand_supply_areas": [
+    {
+      "area_name": "Mirpur 10",
+      "thana": "Mirpur",
+      "demand_searches": 48200,
+      "active_supply": 340,
+      "ratio_demand_supply": 141.7,
+      "average_rent_bdt": 22500,
+      "market_pressure": "extreme_undersupply"
+    }
+  ],
+  "recent_activity": {
+    "recent_pending_nids": [],
+    "recent_pending_properties": [],
+    "recent_spam_reports": []
+  }
 }
 ```
 
@@ -1467,7 +1521,7 @@ Base URI: `/api/v1/admin/`
 | 51 | `GET`, `POST` | `/api/v1/chat/rooms/<uuid:pk>/messages/` | `ChatMessageListCreateView` | Chat | Room Participant Bearer |
 | 52 | `POST` | `/api/v1/chat/rooms/<uuid:pk>/call-token/` | `MaskedCallTokenView` | Chat VoIP | Room Participant Bearer |
 | 53 | `PATCH` | `/api/v1/chat/calls/<uuid:pk>/` | `MaskedCallSessionUpdateView` | Chat VoIP | Call Participant Bearer |
-| 54 | `GET` | `/api/v1/admin/overview-stats/` | `AdminOverviewStatsView` | Admin | SuperAdmin / Staff |
+| 54 | `GET` | `/api/v1/admin/analytics/dashboard/` (or `/overview-stats/`) | `AdminDashboardAnalyticsView` | Admin Dashboard | SuperAdmin / Staff |
 | 55 | `GET` | `/api/v1/admin/nid-verifications/` | `AdminNIDVerificationListView` | Admin | SuperAdmin / Staff |
 | 56 | `POST` | `/api/v1/admin/nid-verifications/<str:pk>/approve/` | `AdminNIDApproveView` | Admin | SuperAdmin / Staff |
 | 57 | `POST` | `/api/v1/admin/nid-verifications/<str:pk>/reject/` | `AdminNIDRejectView` | Admin | SuperAdmin / Staff |

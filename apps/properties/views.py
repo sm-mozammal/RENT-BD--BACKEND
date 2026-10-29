@@ -103,7 +103,9 @@ class PropertyListCreateView(APIView):
         category = request.query_params.get('tenant_category') or request.query_params.get('category')
         if category:
             cat_upper = category.upper()
-            if cat_upper == 'SUBLET':
+            if cat_upper in ['ALL', 'ANY']:
+                pass
+            elif cat_upper == 'SUBLET':
                 queryset = queryset.filter(property_type=Property.PropertyType.SUBLET)
             elif cat_upper in ['BACHELOR', 'BACHELOR_MALE']:
                 queryset = queryset.filter(tenant_category__in=[Property.TenantCategory.BACHELOR_MALE, Property.TenantCategory.ANY])
